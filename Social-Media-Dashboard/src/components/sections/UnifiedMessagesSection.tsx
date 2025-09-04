@@ -247,26 +247,26 @@ export function UnifiedMessagesSection() {
     }
 
     return (
-      <div className="space-y-2 sm:space-y-3">
+      <div className="space-y-1.5 sm:space-y-2">
         {filteredMessages.map((message) => (
           <div
             key={message.id}
-            className={`p-3 sm:p-4 rounded-lg border cursor-pointer transition-colors ${
+            className={`p-2 sm:p-3 rounded-lg border cursor-pointer transition-colors ${
               selectedMessage?.id === message.id 
                 ? 'bg-primary/10 border-primary' 
                 : 'hover:bg-muted/50'
             }`}
             onClick={() => handleMessageClick(message)}
           >
-            <div className="flex items-start gap-2 sm:gap-3">
-              <div className="flex-shrink-0 mt-0.5 sm:mt-1">
+            <div className="flex items-start gap-2">
+              <div className="flex-shrink-0 mt-0.5">
                 {getPlatformIcon(message.platform)}
               </div>
               
               <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-medium text-sm sm:text-base truncate">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="font-medium text-xs sm:text-sm truncate">
                       {message.senderName}
                     </span>
                     <Badge 
@@ -282,18 +282,18 @@ export function UnifiedMessagesSection() {
                 </div>
                 
                 {message.subject && (
-                  <p className="text-sm sm:text-base font-medium text-foreground/90 mt-1 truncate">
+                  <p className="text-xs sm:text-sm font-medium text-foreground/90 mt-1 truncate">
                     {message.subject}
                   </p>
                 )}
                 
-                <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-2 sm:line-clamp-3">
+                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                   {message.content.text}
                 </p>
                 
                 {message.content.attachments && message.content.attachments.length > 0 && (
-                  <div className="mt-2">
-                    <Badge variant="outline" className="text-xs">
+                  <div className="mt-1">
+                    <Badge variant="outline" className="text-xs px-1 py-0">
                       {message.content.attachments.length} attachment{message.content.attachments.length > 1 ? 's' : ''}
                     </Badge>
                   </div>
@@ -509,17 +509,17 @@ export function UnifiedMessagesSection() {
   }, [messages, emails, aiEnabled]);
 
   return (
-    <div className="space-y-8">
-      {/* Enhanced Header Section - Responsive */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl lg:rounded-2xl p-4 sm:p-6 border border-blue-100">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-            <div className="p-2 sm:p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg lg:rounded-xl self-start">
-              <MessageCircle className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+    <div className="space-y-5 sm:space-y-6">
+      {/* Enhanced Header Section - Compact */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 sm:p-4 border border-blue-100">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg self-start">
+              <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Unified Message Manager</h1>
-              <p className="text-gray-600 text-sm sm:text-base lg:text-lg mt-1">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Unified Message Manager</h1>
+              <p className="text-gray-600 text-xs sm:text-sm mt-0.5">
                 Centralized communication hub for all your patient interactions
               </p>
             </div>
@@ -540,8 +540,8 @@ export function UnifiedMessagesSection() {
           </div>
         </div>
         
-        {/* Quick Stats - Responsive */}
-        <div className="flex flex-wrap items-center gap-3 sm:gap-4 lg:gap-6 mt-4 sm:mt-6">
+        {/* Quick Stats - Compact */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3 sm:mt-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
             <span className="text-xs sm:text-sm font-medium text-gray-700">
@@ -569,19 +569,19 @@ export function UnifiedMessagesSection() {
         </div>
       </div>
 
-      {/* Enhanced AI Status Section - Responsive */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+      {/* Enhanced AI Status Section - Compact */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 sm:gap-4">
         {/* Social Media AI Control */}
         <Card className={`transition-all duration-300 ${aiEnabled ? 'border-green-300 bg-green-50 shadow-green-100' : 'border-gray-200 bg-gray-50'}`}>
-          <CardHeader className="pb-3 p-4 sm:p-6 sm:pb-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${aiEnabled ? 'bg-green-500' : 'bg-gray-400'}`}>
-                  {aiEnabled ? <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-white" /> : <BotOff className="h-4 w-4 sm:h-5 sm:w-5 text-white" />}
+          <CardHeader className="pb-2 p-3 sm:p-4 sm:pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className={`p-1.5 rounded-lg ${aiEnabled ? 'bg-green-500' : 'bg-gray-400'}`}>
+                  {aiEnabled ? <Bot className="h-3 w-3 sm:h-4 sm:w-4 text-white" /> : <BotOff className="h-3 w-3 sm:h-4 sm:w-4 text-white" />}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">Social Media AI</h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Facebook & Instagram auto-replies</p>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Social Media AI</h3>
+                  <p className="text-xs text-gray-600">Facebook & Instagram auto-replies</p>
                 </div>
               </div>
               <Button 
@@ -605,9 +605,9 @@ export function UnifiedMessagesSection() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="pt-0 p-4 sm:p-6 sm:pt-0">
-            <div className={`p-3 rounded-lg border ${aiEnabled ? 'bg-green-100 border-green-200' : 'bg-gray-100 border-gray-200'}`}>
-              <p className={`text-xs sm:text-sm ${aiEnabled ? 'text-green-800' : 'text-gray-600'}`}>
+          <CardContent className="pt-0 p-3 sm:p-4 sm:pt-0">
+            <div className={`p-2 rounded-lg border ${aiEnabled ? 'bg-green-100 border-green-200' : 'bg-gray-100 border-gray-200'}`}>
+              <p className={`text-xs ${aiEnabled ? 'text-green-800' : 'text-gray-600'}`}>
                 {aiEnabled 
                   ? processingAiMessages 
                     ? "🔄 Processing old unreplied messages..." 
@@ -621,15 +621,15 @@ export function UnifiedMessagesSection() {
 
         {/* Gmail AI Control */}
         <Card className={`transition-all duration-300 ${gmailAiEnabled ? 'border-red-300 bg-red-50 shadow-red-100' : 'border-gray-200 bg-gray-50'}`}>
-          <CardHeader className="pb-3 p-4 sm:p-6 sm:pb-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${gmailAiEnabled ? 'bg-red-500' : 'bg-gray-400'}`}>
-                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+          <CardHeader className="pb-2 p-3 sm:p-4 sm:pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className={`p-1.5 rounded-lg ${gmailAiEnabled ? 'bg-red-500' : 'bg-gray-400'}`}>
+                  <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">Gmail AI</h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Email auto-reply system</p>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Gmail AI</h3>
+                  <p className="text-xs text-gray-600">Email auto-reply system</p>
                 </div>
               </div>
               <Button 
@@ -653,9 +653,9 @@ export function UnifiedMessagesSection() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="pt-0 p-4 sm:p-6 sm:pt-0">
-            <div className={`p-3 rounded-lg border ${gmailAiEnabled ? 'bg-red-100 border-red-200' : 'bg-gray-100 border-gray-200'}`}>
-              <p className={`text-xs sm:text-sm ${gmailAiEnabled ? 'text-red-800' : 'text-gray-600'}`}>
+          <CardContent className="pt-0 p-3 sm:p-4 sm:pt-0">
+            <div className={`p-2 rounded-lg border ${gmailAiEnabled ? 'bg-red-100 border-red-200' : 'bg-gray-100 border-gray-200'}`}>
+              <p className={`text-xs ${gmailAiEnabled ? 'text-red-800' : 'text-gray-600'}`}>
                 {gmailAiEnabled 
                   ? "✅ Gmail AI is active and monitoring emails"
                   : gmailAuthenticated 
@@ -668,86 +668,86 @@ export function UnifiedMessagesSection() {
         </Card>
       </div>
 
-      {/* Enhanced Platform Sections - Responsive */}
-      <div className="space-y-6 sm:space-y-8">
-        {/* Facebook Messages Section - Enhanced & Responsive */}
-        <div className="bg-white rounded-xl lg:rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-4 sm:px-6 py-3 sm:py-4 border-b border-blue-200">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 sm:p-2 bg-blue-500 rounded-lg shrink-0">
-                  <Facebook className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+      {/* Enhanced Platform Sections - Compact */}
+      <div className="space-y-4 sm:space-y-5">
+        {/* Facebook Messages Section - Compact */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-3 sm:px-4 py-2 sm:py-3 border-b border-blue-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1 sm:p-1.5 bg-blue-500 rounded-lg shrink-0">
+                  <Facebook className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Facebook Messages</h2>
-                  <p className="text-xs sm:text-sm text-gray-600">Patient conversations from Facebook Messenger</p>
+                  <h2 className="text-sm sm:text-base font-semibold text-gray-900">Facebook Messages</h2>
+                  <p className="text-xs text-gray-600">Patient conversations from Facebook Messenger</p>
                 </div>
               </div>
               {facebookUnreadCount > 0 && (
-                <Badge variant="destructive" className="px-2 sm:px-3 py-1 text-xs self-start sm:self-auto">
+                <Badge variant="destructive" className="px-1.5 sm:px-2 py-0.5 text-xs self-start sm:self-auto">
                   {facebookUnreadCount} unread
                 </Badge>
               )}
             </div>
           </div>
-          <div className="p-4 sm:p-6">
+          <div className="p-3 sm:p-4">
             <FacebookMessagesSection />
           </div>
         </div>
 
-        {/* Instagram Messages Section - Enhanced & Responsive */}
-        <div className="bg-white rounded-xl lg:rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-          <div className="bg-gradient-to-r from-pink-50 to-purple-100 px-4 sm:px-6 py-3 sm:py-4 border-b border-pink-200">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 sm:p-2 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg shrink-0">
-                  <Instagram className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+        {/* Instagram Messages Section - Compact */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-gradient-to-r from-pink-50 to-purple-100 px-3 sm:px-4 py-2 sm:py-3 border-b border-pink-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1 sm:p-1.5 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg shrink-0">
+                  <Instagram className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Instagram Messages</h2>
-                  <p className="text-xs sm:text-sm text-gray-600">Direct messages from Instagram Business</p>
+                  <h2 className="text-sm sm:text-base font-semibold text-gray-900">Instagram Messages</h2>
+                  <p className="text-xs text-gray-600">Direct messages from Instagram Business</p>
                 </div>
               </div>
               {instagramUnreadCount > 0 && (
-                <Badge variant="destructive" className="px-2 sm:px-3 py-1 text-xs self-start sm:self-auto">
+                <Badge variant="destructive" className="px-1.5 sm:px-2 py-0.5 text-xs self-start sm:self-auto">
                   {instagramUnreadCount} unread
                 </Badge>
               )}
             </div>
           </div>
-          <div className="p-4 sm:p-6">
+          <div className="p-3 sm:p-4">
             <InstagramMessagesSection />
           </div>
         </div>
 
-        {/* Gmail Messages Section - Enhanced & Responsive */}
-        <div className="bg-white rounded-xl lg:rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-          <div className="bg-gradient-to-r from-red-50 to-orange-100 px-4 sm:px-6 py-3 sm:py-4 border-b border-red-200">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="p-1.5 sm:p-2 bg-red-500 rounded-lg shrink-0">
-                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+        {/* Gmail Messages Section - Compact */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+          <div className="bg-gradient-to-r from-red-50 to-orange-100 px-3 sm:px-4 py-2 sm:py-3 border-b border-red-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1 sm:p-1.5 bg-red-500 rounded-lg shrink-0">
+                  <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Gmail Messages</h2>
-                  <p className="text-xs sm:text-sm text-gray-600">Email communications with patients</p>
+                  <h2 className="text-sm sm:text-base font-semibold text-gray-900">Gmail Messages</h2>
+                  <p className="text-xs text-gray-600">Email communications with patients</p>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                 {gmailBackgroundLoading && (
-                  <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs sm:text-sm">
-                    <RefreshCw className="h-2.5 w-2.5 sm:h-3 sm:w-3 animate-spin" />
+                  <div className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">
+                    <RefreshCw className="h-2 w-2 sm:h-2.5 sm:w-2.5 animate-spin" />
                     <span className="hidden sm:inline">Syncing...</span>
                     <span className="sm:hidden">Sync</span>
                   </div>
                 )}
                 {gmailUnreadCount > 0 && (
-                  <Badge variant="destructive" className="px-2 sm:px-3 py-1 text-xs">
+                  <Badge variant="destructive" className="px-1.5 sm:px-2 py-0.5 text-xs">
                     {gmailUnreadCount} unread
                   </Badge>
                 )}
                 {gmailAiEnabled && (
-                  <Badge variant="secondary" className="bg-green-100 text-green-800 px-2 sm:px-3 py-1 text-xs">
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 px-1.5 sm:px-2 py-0.5 text-xs">
                     <span className="hidden sm:inline">AI Active</span>
                     <span className="sm:hidden">AI</span>
                   </Badge>
@@ -755,7 +755,7 @@ export function UnifiedMessagesSection() {
               </div>
             </div>
           </div>
-          <div className="p-4 sm:p-6">
+          <div className="p-3 sm:p-4">
             {/* Gmail Auth Check - Responsive */}
             {!gmailAuthenticated ? (
               <div className="text-center py-8 sm:py-12">
@@ -791,14 +791,14 @@ export function UnifiedMessagesSection() {
         </div>
       </div>
 
-      {/* Message Detail Panel - Responsive */}
+      {/* Message Detail Panel - Compact */}
       {selectedMessage && (
-        <Card className="mt-6 sm:mt-8">
-          <CardHeader className="p-4 sm:p-6">
+        <Card className="mt-4 sm:mt-5">
+          <CardHeader className="p-3 sm:p-4">
             <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
               <div className="flex items-center gap-2">
                 {getPlatformIcon(selectedMessage.platform)}
-                <span className="truncate">
+                <span className="truncate text-sm sm:text-base">
                   {selectedMessage.subject || `Message from ${selectedMessage.senderName}`}
                 </span>
               </div>
@@ -810,20 +810,20 @@ export function UnifiedMessagesSection() {
                 </Badge>
               )}
             </CardTitle>
-            <CardDescription className="text-xs sm:text-sm">
+            <CardDescription className="text-xs">
               <span className="break-all">{selectedMessage.senderEmail || selectedMessage.senderId}</span>
               <span className="mx-1 hidden sm:inline">•</span>
               <span className="block sm:inline">{formatTime(selectedMessage.timestamp)}</span>
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 p-4 sm:p-6">
-            <div className="bg-muted/30 p-3 sm:p-4 rounded-lg">
-              <p className="whitespace-pre-wrap text-sm sm:text-base">{selectedMessage.content.text}</p>
+          <CardContent className="space-y-3 p-3 sm:p-4">
+            <div className="bg-muted/30 p-2 sm:p-3 rounded-lg">
+              <p className="whitespace-pre-wrap text-xs sm:text-sm">{selectedMessage.content.text}</p>
               {selectedMessage.content.attachments && selectedMessage.content.attachments.length > 0 && (
-                <div className="mt-3 space-y-2">
-                  <p className="text-xs sm:text-sm font-medium">Attachments:</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-xs font-medium">Attachments:</p>
                   {selectedMessage.content.attachments.map((attachment, index) => (
-                    <div key={index} className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                    <div key={index} className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span className="truncate">{attachment.name || `Attachment ${index + 1}`}</span>
                       <Badge variant="outline" className="text-xs shrink-0">{attachment.type}</Badge>
                     </div>
@@ -832,9 +832,9 @@ export function UnifiedMessagesSection() {
               )}
             </div>
             
-            <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <label className="text-sm font-medium">Reply:</label>
+            <div className="space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <label className="text-xs sm:text-sm font-medium">Reply:</label>
                 {aiEnabled && (
                   <Button
                     variant="outline"
@@ -861,7 +861,7 @@ export function UnifiedMessagesSection() {
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 placeholder="Type your reply..."
-                className="w-full min-h-[80px] sm:min-h-[100px] p-3 text-sm sm:text-base border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full min-h-[60px] sm:min-h-[80px] p-2 sm:p-3 text-xs sm:text-sm border border-border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary"
               />
               
               <div className="flex flex-col sm:flex-row justify-end gap-2">
@@ -869,6 +869,7 @@ export function UnifiedMessagesSection() {
                   variant="outline" 
                   onClick={() => setSelectedMessage(null)}
                   className="w-full sm:w-auto"
+                  size="sm"
                 >
                   Cancel
                 </Button>
@@ -876,15 +877,16 @@ export function UnifiedMessagesSection() {
                   onClick={handleReply}
                   disabled={sendingReply || !replyText.trim()}
                   className="w-full sm:w-auto"
+                  size="sm"
                 >
                   {sendingReply ? (
                     <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      <RefreshCw className="h-3 w-3 mr-2 animate-spin" />
                       Sending...
                     </>
                   ) : (
                     <>
-                      <Send className="h-4 w-4 mr-2" />
+                      <Send className="h-3 w-3 mr-2" />
                       Send Reply
                     </>
                   )}
