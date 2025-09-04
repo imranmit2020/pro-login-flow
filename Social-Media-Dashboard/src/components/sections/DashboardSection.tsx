@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FutureCard, GlassCard, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar } from "react-chartjs-2";
 import { Chart, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
 import { MessageCircle, Users, Facebook, Instagram, Mail, ArrowRight, Activity, TrendingUp, Zap, BarChart3, AlertCircle, Loader2 } from "lucide-react";
@@ -193,7 +193,7 @@ export function DashboardSection() {
 
       {/* Enhanced Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-        <Card className="group">
+        <FutureCard className="group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
             <div className="p-2 rounded-full bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors">
@@ -207,9 +207,9 @@ export function DashboardSection() {
               {analyticsData.totalMessagesToday} messages today
             </p>
           </CardContent>
-        </Card>
+        </FutureCard>
 
-        <Card className="group">
+        <FutureCard className="group">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">New Contacts</CardTitle>
             <div className="p-2 rounded-full bg-green-500/20 group-hover:bg-green-500/30 transition-colors">
@@ -223,12 +223,12 @@ export function DashboardSection() {
               This week
             </p>
           </CardContent>
-        </Card>
+        </FutureCard>
       </div>
 
       {/* Enhanced Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <GlassCard>
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-blue-500" />
@@ -240,9 +240,9 @@ export function DashboardSection() {
               {platformMessagesData && <Bar data={platformMessagesData} options={chartOptions} />}
             </div>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card>
+        <GlassCard>
           <CardHeader>
             <CardTitle className="text-xl flex items-center gap-2">
               <Activity className="w-5 h-5 text-purple-500" />
@@ -299,12 +299,12 @@ export function DashboardSection() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       {/* Enhanced Platform Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="group hover:scale-105 transition-all duration-500">
+        <GlassCard className="group hover:scale-105 transition-all duration-500">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors">
@@ -340,9 +340,9 @@ export function DashboardSection() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="group hover:scale-105 transition-all duration-500">
+        <GlassCard className="group hover:scale-105 transition-all duration-500">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-purple-500/20 group-hover:bg-purple-500/30 transition-colors">
@@ -378,9 +378,9 @@ export function DashboardSection() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </GlassCard>
 
-        <Card className="group hover:scale-105 transition-all duration-500">
+        <GlassCard className="group hover:scale-105 transition-all duration-500">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <div className="p-2 rounded-xl bg-red-500/20 group-hover:bg-red-500/30 transition-colors">
@@ -416,11 +416,11 @@ export function DashboardSection() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </GlassCard>
       </div>
 
       {/* Enhanced Quick Actions */}
-      <Card>
+      <FutureCard>
         <CardHeader>
           <CardTitle className="text-2xl flex items-center gap-2">
             <Zap className="w-6 h-6 text-yellow-500" />
@@ -498,7 +498,7 @@ export function DashboardSection() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </FutureCard>
     </div>
   );
 }

@@ -76,54 +76,58 @@ function DashboardContent() {
     );
   }
 
-  // Redirect to signin if not authenticated
+  // Redirect to login if not authenticated
   if (!user) {
     return null;
   }
 
   const handleSectionSelect = (section: string) => {
-    setSelectedSection(section);
-    setSidebarOpen(false);
+    if (section === "analytics") {
+      setSelectedSection("analytics");
+      setAnalyticsSubSection("");
+    } else {
+      setSelectedSection(section);
+      setAnalyticsSubSection("");
+    }
+    
+    // Update URL without page reload
+    const newUrl = section === 'home' ? '/' : `/?section=${section}`;
+    window.history.pushState({}, '', newUrl);
   };
 
   const handleAnalyticsSubSelect = (subSection: string) => {
+    setSelectedSection("analytics");
     setAnalyticsSubSection(subSection);
-  };
-
-  const handleToggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const handleToggleCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
+    
+    // Update URL for analytics subsection
+    const newUrl = `/?section=analytics&filter=${subSection}`;
+    window.history.pushState({}, '', newUrl);
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar
-        selected={selectedSection}
+    <div className="min-h-screen bg-background">
+      {/* Top Navigation */}
+      <TopNavigation 
+        selectedSection={selectedSection}
         onSelect={handleSectionSelect}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        isCollapsed={sidebarCollapsed}
-        onToggleCollapse={handleToggleCollapse}
+        analyticsSubSection={analyticsSubSection}
+        onAnalyticsSubSelect={handleAnalyticsSubSelect}
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Navigation */}
-        <TopNavigation
-          selectedSection={selectedSection}
+      <div className="flex">
+        <Sidebar 
+          selected={selectedSection} 
           onSelect={handleSectionSelect}
-          analyticsSubSection={analyticsSubSection}
-          onAnalyticsSubSelect={handleAnalyticsSubSelect}
-          onToggleSidebar={handleToggleSidebar}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          isCollapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
-
+        
         <main className="flex-1 min-w-0">
           {/* Mobile header */}
-          <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+          <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-background border-b border-border">
             <Button
               variant="ghost"
               size="icon"
@@ -131,21 +135,13 @@ function DashboardContent() {
             >
               <Menu className="h-5 w-5" />
             </Button>
-            
-            {/* Mobile Title */}
-            <div className="flex items-center gap-2">
-              <h1 className="font-bold text-lg bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">
-                OfinaPulse
-              </h1>
-            </div>
-            
             <div className="flex items-center gap-2">
               <ThemeToggler />
             </div>
           </div>
 
           {/* Main content area */}
-          <section className="p-4 lg:p-6 min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
+          <section className="p-4 lg:p-6 min-h-screen">
             <DashboardHome 
               section={selectedSection} 
               analyticsSubSection={analyticsSubSection}
@@ -158,16 +154,27 @@ function DashboardContent() {
   );
 }
 
-export default function HomePage() {
+// Loading fallback component
+function DashboardLoading() {
+  // Enforce light theme even during loading
+  useLightTheme();
+  
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <p className="mt-4 text-gray-600">Loading dashboard...</p>
       </div>
-    }>
+    </div>
+  );
+}
+
+export default function Home() {
+  // Enforce light theme at the page level
+  useLightTheme();
+  
+  return (
+    <Suspense fallback={<DashboardLoading />}>
       <DashboardContent />
     </Suspense>
   );
