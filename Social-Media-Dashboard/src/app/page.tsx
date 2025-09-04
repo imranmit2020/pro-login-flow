@@ -44,6 +44,7 @@ function DashboardContent() {
         'emails': 'emails',
         'social': 'social',
         'campaigns': 'schedule',
+        'ai-assistant': 'ai-assistant',
         'home': 'home'
       };
       

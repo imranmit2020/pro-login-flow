@@ -11,6 +11,7 @@ import { CampaignsSection } from "./sections/CampaignsSection";
 import { SocialMediaSection } from "./sections/SocialMediaSection";
 import { CallsSection } from "./sections/CallsSection";
 import { CalendarSection } from "./sections/CalendarSection";
+import { AIAssistantSection } from "./sections/AIAssistantSection";
 import { useLightTheme } from "@/hooks/useLightTheme";
 
 export function DashboardHome({ 
@@ -47,6 +48,8 @@ export function DashboardHome({
       return <SettingsSection />;
     case "social-pages":
       return <SocialPagesSection />;
+    case "ai-assistant":
+      return <AIAssistantSection />;
     default:
       return <DashboardSection />;
   }
