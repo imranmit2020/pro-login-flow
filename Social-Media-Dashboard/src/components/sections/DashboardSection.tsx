@@ -302,121 +302,208 @@ export function DashboardSection() {
         </GlassCard>
       </div>
 
-      {/* Enhanced Platform Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <GlassCard className="group hover:scale-105 transition-all duration-500">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors">
-                <Facebook className="h-6 w-6 text-blue-500" />
-              </div>
-              <div>
-                <div className="text-lg">Facebook Messages</div>
-                <Badge className={`text-xs ${analyticsData.connectionStatus.facebook ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}`}>
-                  {analyticsData.connectionStatus.facebook ? 'Connected' : 'Disconnected'}
-                </Badge>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                  <div className="text-xl font-bold text-blue-500">{analyticsData.platformStats.facebook.today}</div>
-                  <div className="text-xs text-muted-foreground">Today</div>
+      {/* Premium Platform Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Facebook Card */}
+        <div className="group relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700 scale-105" />
+          <GlassCard className="relative overflow-hidden border-0 bg-gradient-to-br from-white/95 via-white/90 to-blue-50/50 backdrop-blur-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-700 hover:scale-[1.02] hover:-translate-y-2">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-blue-600" />
+            <CardHeader className="relative pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-blue-500 rounded-2xl blur-lg opacity-30 animate-pulse" />
+                    <div className="relative p-3 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transform group-hover:scale-110 transition-transform duration-500">
+                      <Facebook className="h-7 w-7 text-white drop-shadow-lg" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 tracking-tight">Facebook Messages</h3>
+                    <p className="text-sm text-gray-600">Patient conversations</p>
+                  </div>
                 </div>
-                <div className="text-center p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                  <div className="text-xl font-bold text-blue-500">{analyticsData.platformStats.facebook.total}</div>
-                  <div className="text-xs text-muted-foreground">Total</div>
+                <div className="relative">
+                  <Badge className={`relative z-10 font-medium px-3 py-1 shadow-md ${analyticsData.connectionStatus.facebook 
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 shadow-emerald-500/25' 
+                    : 'bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-red-500/25'
+                  }`}>
+                    <div className={`absolute inset-0 rounded-full animate-pulse ${analyticsData.connectionStatus.facebook ? 'bg-emerald-400/20' : 'bg-red-400/20'}`} />
+                    {analyticsData.connectionStatus.facebook ? '● Connected' : '● Disconnected'}
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-2xl" />
+                  <div className="relative text-center p-5 rounded-2xl border border-blue-200/50 bg-white/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 group/stat hover:scale-105">
+                    <div className="text-3xl font-bold text-blue-600 mb-1 group-hover/stat:scale-110 transition-transform duration-300">
+                      {analyticsData.platformStats.facebook.today}
+                    </div>
+                    <div className="text-xs font-semibold text-blue-500/80 uppercase tracking-wider">Today</div>
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-500 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                  </div>
+                </div>
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/10 rounded-2xl" />
+                  <div className="relative text-center p-5 rounded-2xl border border-blue-200/50 bg-white/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 group/stat hover:scale-105">
+                    <div className="text-3xl font-bold text-blue-600 mb-1 group-hover/stat:scale-110 transition-transform duration-300">
+                      {analyticsData.platformStats.facebook.total}
+                    </div>
+                    <div className="text-xs font-semibold text-blue-500/80 uppercase tracking-wider">Total</div>
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-blue-500 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                  </div>
                 </div>
               </div>
               <Button 
-                size="sm" 
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-blue-500/25"
+                className="w-full h-12 text-white font-semibold bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 hover:from-blue-700 hover:via-blue-600 hover:to-blue-700 shadow-xl hover:shadow-2xl hover:shadow-blue-500/40 border-0 rounded-2xl transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-500 relative overflow-hidden group/btn"
                 onClick={() => router.push('/?section=unified-messages')}
               >
-                View Facebook Messages
-                <ArrowRight className="h-3 w-3 ml-1" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+                <span className="relative flex items-center justify-center gap-2">
+                  View Facebook Messages
+                  <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                </span>
               </Button>
-            </div>
-          </CardContent>
-        </GlassCard>
+            </CardContent>
+          </GlassCard>
+        </div>
 
-        <GlassCard className="group hover:scale-105 transition-all duration-500">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-purple-500/20 group-hover:bg-purple-500/30 transition-colors">
-                <Instagram className="h-6 w-6 text-purple-500" />
-              </div>
-              <div>
-                <div className="text-lg">Instagram Messages</div>
-                <Badge className={`text-xs ${analyticsData.connectionStatus.instagram ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}`}>
-                  {analyticsData.connectionStatus.instagram ? 'Connected' : 'Disconnected'}
-                </Badge>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                  <div className="text-xl font-bold text-purple-500">{analyticsData.platformStats.instagram.today}</div>
-                  <div className="text-xs text-muted-foreground">Today</div>
+        {/* Instagram Card */}
+        <div className="group relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-purple-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700 scale-105" />
+          <GlassCard className="relative overflow-hidden border-0 bg-gradient-to-br from-white/95 via-white/90 to-pink-50/50 backdrop-blur-xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-700 hover:scale-[1.02] hover:-translate-y-2">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-purple-600" />
+            <CardHeader className="relative pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl blur-lg opacity-30 animate-pulse" />
+                    <div className="relative p-3 rounded-2xl bg-gradient-to-br from-pink-500 via-purple-500 to-purple-600 shadow-lg transform group-hover:scale-110 transition-transform duration-500">
+                      <Instagram className="h-7 w-7 text-white drop-shadow-lg" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 tracking-tight">Instagram Messages</h3>
+                    <p className="text-sm text-gray-600">Direct messages</p>
+                  </div>
                 </div>
-                <div className="text-center p-3 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                  <div className="text-xl font-bold text-purple-500">{analyticsData.platformStats.instagram.total}</div>
-                  <div className="text-xs text-muted-foreground">Total</div>
+                <div className="relative">
+                  <Badge className={`relative z-10 font-medium px-3 py-1 shadow-md ${analyticsData.connectionStatus.instagram 
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 shadow-emerald-500/25' 
+                    : 'bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-red-500/25'
+                  }`}>
+                    <div className={`absolute inset-0 rounded-full animate-pulse ${analyticsData.connectionStatus.instagram ? 'bg-emerald-400/20' : 'bg-red-400/20'}`} />
+                    {analyticsData.connectionStatus.instagram ? '● Connected' : '● Disconnected'}
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-600/10 rounded-2xl" />
+                  <div className="relative text-center p-5 rounded-2xl border border-purple-200/50 bg-white/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 group/stat hover:scale-105">
+                    <div className="text-3xl font-bold text-purple-600 mb-1 group-hover/stat:scale-110 transition-transform duration-300">
+                      {analyticsData.platformStats.instagram.today}
+                    </div>
+                    <div className="text-xs font-semibold text-purple-500/80 uppercase tracking-wider">Today</div>
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                  </div>
+                </div>
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-600/10 rounded-2xl" />
+                  <div className="relative text-center p-5 rounded-2xl border border-purple-200/50 bg-white/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 group/stat hover:scale-105">
+                    <div className="text-3xl font-bold text-purple-600 mb-1 group-hover/stat:scale-110 transition-transform duration-300">
+                      {analyticsData.platformStats.instagram.total}
+                    </div>
+                    <div className="text-xs font-semibold text-purple-500/80 uppercase tracking-wider">Total</div>
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                  </div>
                 </div>
               </div>
               <Button 
-                size="sm" 
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-purple-500/25"
+                className="w-full h-12 text-white font-semibold bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600 hover:from-purple-700 hover:via-pink-600 hover:to-purple-700 shadow-xl hover:shadow-2xl hover:shadow-purple-500/40 border-0 rounded-2xl transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-500 relative overflow-hidden group/btn"
                 onClick={() => router.push('/?section=unified-messages')}
               >
-                View Instagram DMs
-                <ArrowRight className="h-3 w-3 ml-1" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+                <span className="relative flex items-center justify-center gap-2">
+                  View Instagram DMs
+                  <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                </span>
               </Button>
-            </div>
-          </CardContent>
-        </GlassCard>
+            </CardContent>
+          </GlassCard>
+        </div>
 
-        <GlassCard className="group hover:scale-105 transition-all duration-500">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-red-500/20 group-hover:bg-red-500/30 transition-colors">
-                <Mail className="h-6 w-6 text-red-500" />
-              </div>
-              <div>
-                <div className="text-lg">Gmail Messages</div>
-                <Badge className={`text-xs ${analyticsData.connectionStatus.gmail ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}`}>
-                  {analyticsData.connectionStatus.gmail ? 'Connected' : 'Disconnected'}
-                </Badge>
-              </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="text-center p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                  <div className="text-xl font-bold text-red-500">{analyticsData.platformStats.gmail.today}</div>
-                  <div className="text-xs text-muted-foreground">Today</div>
+        {/* Gmail Card */}
+        <div className="group relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-orange-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700 scale-105" />
+          <GlassCard className="relative overflow-hidden border-0 bg-gradient-to-br from-white/95 via-white/90 to-red-50/50 backdrop-blur-xl shadow-2xl hover:shadow-red-500/25 transition-all duration-700 hover:scale-[1.02] hover:-translate-y-2">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-600" />
+            <CardHeader className="relative pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-red-500 rounded-2xl blur-lg opacity-30 animate-pulse" />
+                    <div className="relative p-3 rounded-2xl bg-gradient-to-br from-red-500 to-orange-600 shadow-lg transform group-hover:scale-110 transition-transform duration-500">
+                      <Mail className="h-7 w-7 text-white drop-shadow-lg" />
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 tracking-tight">Gmail Messages</h3>
+                    <p className="text-sm text-gray-600">Email communications</p>
+                  </div>
                 </div>
-                <div className="text-center p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                  <div className="text-xl font-bold text-red-500">{analyticsData.platformStats.gmail.total}</div>
-                  <div className="text-xs text-muted-foreground">Total</div>
+                <div className="relative">
+                  <Badge className={`relative z-10 font-medium px-3 py-1 shadow-md ${analyticsData.connectionStatus.gmail 
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white border-0 shadow-emerald-500/25' 
+                    : 'bg-gradient-to-r from-red-500 to-rose-500 text-white border-0 shadow-red-500/25'
+                  }`}>
+                    <div className={`absolute inset-0 rounded-full animate-pulse ${analyticsData.connectionStatus.gmail ? 'bg-emerald-400/20' : 'bg-red-400/20'}`} />
+                    {analyticsData.connectionStatus.gmail ? '● Connected' : '● Disconnected'}
+                  </Badge>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-orange-600/10 rounded-2xl" />
+                  <div className="relative text-center p-5 rounded-2xl border border-red-200/50 bg-white/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 group/stat hover:scale-105">
+                    <div className="text-3xl font-bold text-red-600 mb-1 group-hover/stat:scale-110 transition-transform duration-300">
+                      {analyticsData.platformStats.gmail.today}
+                    </div>
+                    <div className="text-xs font-semibold text-red-500/80 uppercase tracking-wider">Today</div>
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                  </div>
+                </div>
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-orange-600/10 rounded-2xl" />
+                  <div className="relative text-center p-5 rounded-2xl border border-red-200/50 bg-white/40 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 group/stat hover:scale-105">
+                    <div className="text-3xl font-bold text-red-600 mb-1 group-hover/stat:scale-110 transition-transform duration-300">
+                      {analyticsData.platformStats.gmail.total}
+                    </div>
+                    <div className="text-xs font-semibold text-red-500/80 uppercase tracking-wider">Total</div>
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-red-500 to-transparent opacity-0 group-hover/stat:opacity-100 transition-opacity duration-300" />
+                  </div>
                 </div>
               </div>
               <Button 
-                size="sm" 
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 shadow-lg hover:shadow-red-500/25"
+                className="w-full h-12 text-white font-semibold bg-gradient-to-r from-red-600 via-orange-500 to-red-600 hover:from-red-700 hover:via-orange-600 hover:to-red-700 shadow-xl hover:shadow-2xl hover:shadow-red-500/40 border-0 rounded-2xl transform hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-500 relative overflow-hidden group/btn"
                 onClick={() => router.push('/?section=unified-messages')}
               >
-                {analyticsData.connectionStatus.gmail ? 'View Gmail Inbox' : 'Connect Gmail'}
-                <ArrowRight className="h-3 w-3 ml-1" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+                <span className="relative flex items-center justify-center gap-2">
+                  {analyticsData.connectionStatus.gmail ? 'View Gmail Inbox' : 'Connect Gmail'}
+                  <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                </span>
               </Button>
-            </div>
-          </CardContent>
-        </GlassCard>
+            </CardContent>
+          </GlassCard>
+        </div>
       </div>
 
       {/* Enhanced Quick Actions */}
