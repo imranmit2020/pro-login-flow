@@ -1,0 +1,762 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Facebook, Instagram, Mail, MessageCircle, Send, RefreshCw, AlertCircle, Bot, BotOff } from "lucide-react";
+import { useMessages } from "@/hooks/useMessages";
+import { useGmail } from "@/hooks/useGmail";
+import { FacebookMessagesSection } from "./FacebookMessagesSection";
+import { InstagramMessagesSection } from "./InstagramMessagesSection";
+import { useAiEnabledState } from "@/hooks/useLocalStorage";
+
+interface UnifiedMessage {
+  id: string;
+  platform: 'facebook' | 'instagram' | 'gmail';
+  senderId: string;
+  senderName: string;
+  senderEmail?: string;
+  subject?: string;
+  content: {
+    text: string;
+    attachments?: Array<{
+      type: string;
+      url: string;
+      name?: string;
+    }>;
+  };
+  timestamp: string;
+  status: 'unread' | 'read' | 'replied';
+  conversationId: string;
+  isRead: boolean;
+  isReplied: boolean;
+}
+
+interface MessageInput {
+  id: string;
+  platform: string;
+  senderId: string;
+  senderName: string;
+  senderEmail?: string;
+  subject?: string;
+  content: { text: string; attachments?: Array<{ type: string; url: string; name?: string }> };
+  timestamp: string;
+  conversationId: string;
+  isRead: boolean;
+  isReplied: boolean;
+}
+
+interface EmailInput {
+  id: string;
+  sender: { email: string; name: string };
+  subject: string;
+  body: string;
+  attachments?: Array<{ type: string; url: string; name?: string }>;
+  timestamp: string;
+  status: string;
+  threadId: string;
+}
+
+export function UnifiedMessagesSection() {
+  const { 
+    messages, 
+    loading: messagesLoading, 
+    error: messagesError, 
+    fetchMessages, 
+    sendReply: sendSocialReply, 
+    markAsRead 
+  } = useMessages();
+
+  const {
+    emails,
+    loading: gmailLoading,
+    backgroundLoading: gmailBackgroundLoading,
+    error: gmailError,
+    isAuthenticated: gmailAuthenticated,
+    authenticateGmail,
+    fetchEmails,
+    sendReply: sendGmailReply
+  } = useGmail();
+
+  const [selectedMessage, setSelectedMessage] = useState<UnifiedMessage | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
+  
+  // AI Toggle State (persistent with localStorage)
+  const [aiEnabled, setAiEnabled] = useAiEnabledState('social');
+  const [processingAiMessages, setProcessingAiMessages] = useState(false);
+  
+  // Gmail AI Toggle State (persistent with localStorage)
+  const [gmailAiEnabled, setGmailAiEnabled] = useAiEnabledState('gmail');
+  const [gmailAiProcessing, setGmailAiProcessing] = useState(false);
+  
+  // N8N Webhook URL from environment only
+  const n8nWebhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
+  
+  // Gmail AI Webhook URL (hardcoded as requested)
+  const gmailAiWebhookUrl = "https://ows23hph.rpcl.host/webhook/d40ae863-6cc6-4d93-b8ed-f9ea11f5c1f7";
+
+  // Transform backend messages to match frontend interface
+  const transformMessage = useCallback((msg: MessageInput): UnifiedMessage => ({
+    id: msg.id,
+    platform: msg.platform as 'facebook' | 'instagram' | 'gmail',
+    senderId: msg.senderId,
+    senderName: msg.senderName,
+    senderEmail: msg.senderEmail,
+    subject: msg.subject,
+    content: msg.content,
+    timestamp: msg.timestamp,
+    status: msg.isRead ? (msg.isReplied ? 'replied' : 'read') : 'unread',
+    conversationId: msg.conversationId,
+    isRead: msg.isRead,
+    isReplied: msg.isReplied
+  }), []);
+
+  // Transform Gmail emails to unified message format
+  const transformGmailToMessage = useCallback((email: EmailInput): UnifiedMessage => ({
+    id: `gmail_${email.id}`,
+    platform: 'gmail',
+    senderId: email.sender.email,
+    senderName: email.sender.name,
+    senderEmail: email.sender.email,
+    subject: email.subject,
+    content: {
+      text: email.body,
+      attachments: email.attachments || []
+    },
+    timestamp: email.timestamp,
+    status: email.status === 'unread' ? 'unread' : 'read',
+    conversationId: email.threadId,
+    isRead: email.status !== 'unread',
+    isReplied: false
+  }), []);
+
+  // Separate messages by platform
+  const socialMessages = messages.map(transformMessage);
+  const gmailMessages = emails.map(transformGmailToMessage);
+  
+  const facebookMessages = socialMessages.filter(msg => msg.platform === 'facebook');
+  const instagramMessages = socialMessages.filter(msg => msg.platform === 'instagram');
+
+  // Calculate unread counts for each platform
+  const facebookUnreadCount = facebookMessages.filter(msg => msg.status === 'unread').length;
+  const instagramUnreadCount = instagramMessages.filter(msg => msg.status === 'unread').length;
+  const gmailUnreadCount = gmailMessages.filter(msg => msg.status === 'unread').length;
+
+  // Fetch emails when authenticated status changes to true
+  useEffect(() => {
+    if (gmailAuthenticated) {
+      fetchEmails({ limit: 20 }); // Initial load shows loading screen
+    }
+  }, [gmailAuthenticated, fetchEmails]);
+
+  const formatTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString('en-US', { 
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case 'facebook':
+        return <Facebook className="h-4 w-4 text-blue-600" />;
+      case 'instagram':
+        return <Instagram className="h-4 w-4 text-pink-600" />;
+      case 'gmail':
+        return <Mail className="h-4 w-4 text-red-600" />;
+      default:
+        return <MessageCircle className="h-4 w-4" />;
+    }
+  };
+
+  const filterMessages = (messages: UnifiedMessage[]) => {
+    return messages
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  };
+
+  const handleReply = async () => {
+    if (replyText.trim() && selectedMessage) {
+      setSendingReply(true);
+      try {
+        if (selectedMessage.platform === 'gmail') {
+          await sendGmailReply({
+            threadId: selectedMessage.conversationId,
+            replyText,
+            recipientEmail: selectedMessage.senderEmail || '',
+            subject: selectedMessage.subject || ''
+          });
+        } else {
+          const success = await sendSocialReply(
+            selectedMessage.senderId, 
+            replyText, 
+            selectedMessage.platform
+          );
+          if (!success) throw new Error('Failed to send reply');
+        }
+        
+        setReplyText("");
+        alert('Reply sent successfully!');
+        
+        if (selectedMessage) {
+          setSelectedMessage({
+            ...selectedMessage,
+            status: 'replied',
+            isReplied: true
+          });
+        }
+        
+        fetchMessages();
+        
+      } catch (error) {
+        console.error('Error sending reply:', error);
+        alert('Failed to send reply. Please try again.');
+      } finally {
+        setSendingReply(false);
+      }
+    }
+  };
+
+  const handleMessageClick = (message: UnifiedMessage) => {
+    setSelectedMessage(message);
+    if (!message.isRead) {
+      markAsRead(message.id);
+    }
+  };
+
+  const handleRefresh = () => {
+    fetchMessages();
+    if (gmailAuthenticated) {
+      fetchEmails({ limit: 20, background: true }); // Smooth refresh without loading screen
+    }
+  };
+
+  const renderMessageList = (messages: UnifiedMessage[], platform: string) => {
+    const filteredMessages = filterMessages(messages);
+
+    if (filteredMessages.length === 0) {
+      return (
+        <div className="text-center py-8 text-muted-foreground">
+          <MessageCircle className="h-12 w-12 mx-auto mb-2 opacity-50" />
+          <p>No {platform} messages found</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-2">
+        {filteredMessages.map((message) => (
+          <div
+            key={message.id}
+            className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+              selectedMessage?.id === message.id 
+                ? 'bg-primary/10 border-primary' 
+                : 'hover:bg-muted/50'
+            }`}
+            onClick={() => handleMessageClick(message)}
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 mt-1">
+                {getPlatformIcon(message.platform)}
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-sm truncate">
+                      {message.senderName}
+                    </span>
+                    <Badge 
+                      variant={message.status === 'unread' ? 'destructive' : 'secondary'}
+                      className="text-xs px-1 py-0"
+                    >
+                      {message.status}
+                    </Badge>
+                  </div>
+                  <span className="text-xs text-muted-foreground flex-shrink-0">
+                    {formatTime(message.timestamp)}
+                  </span>
+                </div>
+                
+                {message.subject && (
+                  <p className="text-sm font-medium text-foreground/90 mt-1 truncate">
+                    {message.subject}
+                  </p>
+                )}
+                
+                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                  {message.content.text}
+                </p>
+                
+                {message.content.attachments && message.content.attachments.length > 0 && (
+                  <div className="mt-1">
+                    <Badge variant="outline" className="text-xs">
+                      {message.content.attachments.length} attachment(s)
+                    </Badge>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // N8N Webhook Integration
+  const sendToN8nWebhook = async (message: UnifiedMessage): Promise<string> => {
+    if (!n8nWebhookUrl) {
+      throw new Error('N8N webhook URL not configured. Please set NEXT_PUBLIC_N8N_WEBHOOK_URL in your environment variables.');
+    }
+
+    try {
+      const response = await fetch(n8nWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messageId: message.id,
+          platform: message.platform,
+          senderId: message.senderId,
+          senderName: message.senderName,
+          senderEmail: message.senderEmail,
+          subject: message.subject,
+          content: message.content,
+          timestamp: message.timestamp,
+          conversationId: message.conversationId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`N8N webhook failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result.aiReply || result.reply || "Thank you for your message. We'll get back to you soon.";
+    } catch (error) {
+      console.error('Error sending to N8N webhook:', error);
+      throw error;
+    }
+  };
+
+  const sendAiReply = async (message: UnifiedMessage, aiReplyText: string) => {
+    try {
+      if (message.platform === 'gmail') {
+        await sendGmailReply({
+          threadId: message.conversationId,
+          replyText: aiReplyText,
+          recipientEmail: message.senderEmail || '',
+          subject: message.subject ? `Re: ${message.subject}` : 'Re: Your message'
+        });
+      } else {
+        const success = await sendSocialReply(
+          message.senderId, 
+          aiReplyText, 
+          message.platform
+        );
+        if (!success) throw new Error('Failed to send AI reply');
+      }
+
+      // Mark message as replied
+      markAsRead(message.id);
+      console.log(`AI reply sent to ${message.senderName} on ${message.platform}`);
+    } catch (error) {
+      console.error('Error sending AI reply:', error);
+      throw error;
+    }
+  };
+
+  const processOldMessages = async () => {
+    if (!aiEnabled) return;
+
+    setProcessingAiMessages(true);
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    try {
+      // Get all messages (social + gmail)
+      const allMessages = [...socialMessages, ...gmailMessages];
+      
+      // Filter messages: older than 24 hours and not replied
+      const oldUnrepliedMessages = allMessages.filter(message => {
+        const messageDate = new Date(message.timestamp);
+        return messageDate < twentyFourHoursAgo && !message.isReplied;
+      });
+
+      console.log(`Processing ${oldUnrepliedMessages.length} old unreplied messages`);
+
+      // Process each message
+      for (const message of oldUnrepliedMessages) {
+        try {
+          const aiReply = await sendToN8nWebhook(message);
+          await sendAiReply(message, aiReply);
+          
+          // Add a small delay to avoid overwhelming the APIs
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } catch (error) {
+          console.error(`Failed to process message ${message.id}:`, error);
+        }
+      }
+
+      // Refresh messages to show updated status
+      fetchMessages();
+      if (gmailAuthenticated) {
+        fetchEmails({ limit: 20, background: true }); // Background refresh during AI processing
+      }
+
+    } catch (error) {
+      console.error('Error processing old messages:', error);
+      alert('Error processing old messages. Please try again.');
+    } finally {
+      setProcessingAiMessages(false);
+    }
+  };
+
+  const handleNewMessageAiReply = async (message: UnifiedMessage) => {
+    if (!aiEnabled) return;
+
+    try {
+      const aiReply = await sendToN8nWebhook(message);
+      await sendAiReply(message, aiReply);
+    } catch (error) {
+      console.error('Error handling new message with AI:', error);
+    }
+  };
+
+  const handleAiToggle = async () => {
+    if (!n8nWebhookUrl) {
+      alert('N8N webhook URL not configured. Please set NEXT_PUBLIC_N8N_WEBHOOK_URL in your environment variables.');
+      return;
+    }
+
+    const newAiState = !aiEnabled;
+    setAiEnabled(newAiState);
+
+    if (newAiState) {
+      // When AI is enabled, process old messages
+      await processOldMessages();
+    }
+  };
+
+  // Gmail AI Toggle Handler
+  const handleGmailAiToggle = async () => {
+    const newGmailAiState = !gmailAiEnabled;
+    setGmailAiProcessing(true);
+
+    try {
+      console.log(`Attempting to ${newGmailAiState ? 'activate' : 'deactivate'} Gmail AI...`);
+      console.log('Webhook URL:', gmailAiWebhookUrl);
+      
+      const requestBody = {
+        action: newGmailAiState ? "ACTIVATE" : "DEACTIVATE"
+      };
+      
+      console.log('Request body:', requestBody);
+
+      const response = await fetch(gmailAiWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response statusText:', response.statusText);
+
+      if (!response.ok) {
+        // Try to get response text for more details
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Gmail AI webhook failed: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+
+      // Try to parse response
+      const responseData = await response.text();
+      console.log('Response data:', responseData);
+
+      setGmailAiEnabled(newGmailAiState);
+      console.log(`Gmail AI ${newGmailAiState ? 'activated' : 'deactivated'} successfully`);
+      alert(`Gmail AI ${newGmailAiState ? 'activated' : 'deactivated'} successfully!`);
+      
+    } catch (error) {
+      console.error('Error toggling Gmail AI:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      alert(`Failed to ${newGmailAiState ? 'activate' : 'deactivate'} Gmail AI. Error: ${errorMessage}`);
+    } finally {
+      setGmailAiProcessing(false);
+    }
+  };
+
+  // Monitor for new messages when AI is enabled
+  useEffect(() => {
+    if (!aiEnabled) return;
+
+    const allMessages = [...socialMessages, ...gmailMessages];
+    const recentMessages = allMessages.filter(message => {
+      const messageDate = new Date(message.timestamp);
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      return messageDate > fiveMinutesAgo && !message.isReplied && message.status === 'unread';
+    });
+
+    // Auto-reply to recent unread messages
+    recentMessages.forEach(message => {
+      handleNewMessageAiReply(message);
+    });
+  }, [messages, emails, aiEnabled]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">All Messages</h2>
+          <p className="text-muted-foreground">
+            Manage messages from Facebook, Instagram, and Gmail
+          </p>
+        </div>
+      </div>
+
+      {/* AI Status Card */}
+      {aiEnabled && (
+        <Card className="border-green-200 bg-green-50">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Bot className="h-5 w-5 text-green-600" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-800">
+                  AI Auto-Reply Enabled
+                </p>
+                <p className="text-xs text-green-600">
+                  {processingAiMessages 
+                    ? "Processing old unreplied messages..." 
+                    : "New messages will be automatically replied to using AI"
+                  }
+                </p>
+              </div>
+              {processingAiMessages && (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+             {/* N8N Configuration
+      {n8nWebhookUrl ? (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">N8N Webhook Configuration:</label>
+                <Badge variant="secondary" className="bg-green-100 text-green-800">
+                  ✓ Configured
+                </Badge>
+              </div>
+              
+              <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                <p className="text-sm text-green-800">
+                  <strong>Status:</strong> Webhook URL is configured via environment variables
+                </p>
+                <p className="text-xs text-green-600 mt-1">
+                  Environment Variable: NEXT_PUBLIC_N8N_WEBHOOK_URL
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">N8N Webhook Configuration:</label>
+                <Badge variant="destructive">
+                  ⚠ Not Configured
+                </Badge>
+              </div>
+              
+              <div className="p-3 bg-red-100 border border-red-200 rounded-md">
+                <p className="text-sm text-red-800">
+                  <strong>Error:</strong> N8N webhook URL is not configured
+                </p>
+                <p className="text-xs text-red-600 mt-1">
+                  Please set NEXT_PUBLIC_N8N_WEBHOOK_URL in your .env.local file
+                </p>
+                <p className="text-xs text-red-600 mt-1 font-mono bg-red-200 p-1 rounded">
+                  NEXT_PUBLIC_N8N_WEBHOOK_URL=https://your-n8n-url.com/webhook/...
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )} */}
+
+      {/* Platform Sections */}
+      <div className="grid gap-6">
+        {/* Facebook Messages Section - New Thread View */}
+        <FacebookMessagesSection />
+
+        {/* Instagram Messages Section - New Thread View */}
+        <InstagramMessagesSection />
+
+        {/* Gmail Messages Section */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2">
+                  <Mail className="h-5 w-5 text-red-600" />
+                  Gmail Messages
+                  {gmailUnreadCount > 0 && (
+                    <Badge variant="destructive" className="ml-2">
+                      {gmailUnreadCount} unread
+                    </Badge>
+                  )}
+                  {gmailAiEnabled && (
+                    <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800">
+                      AI Active
+                    </Badge>
+                  )}
+                  {gmailBackgroundLoading && (
+                    <div className="flex items-center gap-1 ml-2">
+                      <RefreshCw className="h-3 w-3 animate-spin text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Syncing...</span>
+                    </div>
+                  )}
+                </CardTitle>
+              </div>
+              
+              {/* Gmail AI Toggle Button */}
+              <Button 
+                onClick={handleGmailAiToggle} 
+                variant={gmailAiEnabled ? "default" : "outline"} 
+                size="sm"
+                disabled={gmailAiProcessing || !gmailAuthenticated}
+                className={gmailAiEnabled ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                {gmailAiProcessing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    {gmailAiEnabled ? "Disabling..." : "Enabling..."}
+                  </>
+                ) : gmailAiEnabled ? (
+                  <>
+                    <Bot className="h-4 w-4 mr-2" />
+                    Gmail AI On
+                  </>
+                ) : (
+                  <>
+                    <BotOff className="h-4 w-4 mr-2" />
+                    Gmail AI Off
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardHeader>
+          
+          <CardContent>
+            {!gmailAuthenticated ? (
+              <div className="text-center py-8">
+                <Mail className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground mb-4">Gmail not connected</p>
+                <Button onClick={authenticateGmail} variant="outline">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Connect Gmail
+                </Button>
+              </div>
+            ) : gmailError ? (
+              <div className="text-center py-8 text-red-500">
+                <AlertCircle className="h-8 w-8 mx-auto mb-2" />
+                <p>Error loading Gmail messages</p>
+              </div>
+            ) : (
+              renderMessageList(gmailMessages, 'Gmail')
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Message Detail Panel */}
+      {selectedMessage && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              {getPlatformIcon(selectedMessage.platform)}
+              {selectedMessage.subject || `Message from ${selectedMessage.senderName}`}
+              {aiEnabled && (
+                <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-800">
+                  <Bot className="h-3 w-3 mr-1" />
+                  AI Available
+                </Badge>
+              )}
+            </CardTitle>
+            <CardDescription>
+              {selectedMessage.senderEmail || selectedMessage.senderId} • {formatTime(selectedMessage.timestamp)}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-muted/30 p-4 rounded-lg">
+              <p className="whitespace-pre-wrap">{selectedMessage.content.text}</p>
+              {selectedMessage.content.attachments && selectedMessage.content.attachments.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-sm font-medium">Attachments:</p>
+                  {selectedMessage.content.attachments.map((attachment, index) => (
+                    <div key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>{attachment.name || `Attachment ${index + 1}`}</span>
+                      <Badge variant="outline" className="text-xs">{attachment.type}</Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">Reply:</label>
+                {aiEnabled && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const aiReply = await sendToN8nWebhook(selectedMessage);
+                        setReplyText(aiReply);
+                      } catch (error) {
+                        alert('Failed to generate AI reply. Please try again.');
+                      }
+                    }}
+                  >
+                    <Bot className="h-4 w-4 mr-2" />
+                    Generate AI Reply
+                  </Button>
+                )}
+              </div>
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Type your reply..."
+                className="w-full h-24 p-3 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-muted-foreground">
+                  Replying to {selectedMessage.senderName} via {selectedMessage.platform}
+                </span>
+                <Button 
+                  onClick={handleReply} 
+                  disabled={!replyText.trim() || sendingReply}
+                  size="sm"
+                >
+                  <Send className="h-4 w-4 mr-2" />
+                  {sendingReply ? 'Sending...' : 'Send Reply'}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
