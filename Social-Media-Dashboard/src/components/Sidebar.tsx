@@ -86,9 +86,7 @@ export function Sidebar({
       
       {/* Sidebar */}
       <aside className={cn(
-        "fixed lg:relative lg:translate-x-0 min-h-screen bg-gradient-to-br from-card/95 via-card/90 to-card/85 backdrop-blur-xl border-r border-white/20 dark:border-white/10 flex flex-col z-50 sidebar-transition sidebar-accelerated shadow-2xl shadow-black/20",
-        "before:absolute before:inset-0 before:bg-gradient-to-br before:from-blue-500/5 before:via-blue-500/5 before:to-teal-500/5 before:pointer-events-none",
-        "after:absolute after:inset-0 after:bg-gradient-to-b after:from-white/10 after:to-transparent after:pointer-events-none",
+        "fixed lg:relative lg:translate-x-0 min-h-screen bg-white border-r border-gray-200 flex flex-col z-50 transition-all duration-300 shadow-lg",
         isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         isCollapsed ? "w-20" : "w-80"
       )}>
