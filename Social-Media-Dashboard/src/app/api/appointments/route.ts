@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { db } from '@/lib/db';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,36 +7,25 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
     const limit = searchParams.get('limit');
 
-    let query = supabase
-      .from('appointments')
-      .select('*')
-      .order('created_at', { ascending: false });
+    // Get all appointments first
+    const appointments = await db.getAppointments();
 
-    // Apply status filter if provided
+    // Apply filters
+    let filteredAppointments = appointments;
+    
     if (status && status !== 'all') {
-      query = query.eq('status', status);
+      filteredAppointments = appointments.filter((apt: any) => apt.status === status);
     }
 
-    // Apply limit if provided
     if (limit) {
-      query = query.limit(parseInt(limit));
-    }
-
-    const { data: appointments, error } = await query;
-
-    if (error) {
-      console.error('Error fetching appointments:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch appointments' },
-        { status: 500 }
-      );
+      filteredAppointments = filteredAppointments.slice(0, parseInt(limit));
     }
 
     // Calculate statistics
     const totalAppointments = appointments?.length || 0;
-    const confirmedAppointments = appointments?.filter(apt => apt.status === 'Confirmed').length || 0;
-    const pendingAppointments = appointments?.filter(apt => apt.status === 'Pending').length || 0;
-    const cancelledAppointments = appointments?.filter(apt => apt.status === 'Cancelled').length || 0;
+    const confirmedAppointments = appointments?.filter((apt: any) => apt.status === 'Confirmed').length || 0;
+    const pendingAppointments = appointments?.filter((apt: any) => apt.status === 'Pending').length || 0;
+    const cancelledAppointments = appointments?.filter((apt: any) => apt.status === 'Cancelled').length || 0;
     
     const confirmationRate = totalAppointments > 0 ? (confirmedAppointments / totalAppointments) * 100 : 0;
 
@@ -48,7 +37,7 @@ export async function GET(request: NextRequest) {
     };
 
     // Group by service for analytics
-    const appointmentsByService = appointments?.reduce((acc, apt) => {
+    const appointmentsByService = appointments?.reduce((acc: any, apt: any) => {
       acc[apt.service] = (acc[apt.service] || 0) + 1;
       return acc;
     }, {} as Record<string, number>) || {};
@@ -61,7 +50,7 @@ export async function GET(request: NextRequest) {
       confirmationRate,
       appointmentsByStatus,
       appointmentsByService,
-      appointments: appointments || [],
+      appointments: filteredAppointments || [],
       lastUpdated: new Date().toISOString()
     };
 
@@ -75,38 +64,37 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const { id, status } = await request.json();
+    const body = await request.json();
+    const { full_name, phone_number, gender, location, service, preferred_time } = body;
 
-    if (!id || !status) {
+    if (!full_name || !phone_number || !service) {
       return NextResponse.json(
-        { error: 'ID and status are required' },
+        { error: 'Missing required fields' },
         { status: 400 }
       );
     }
 
-    const { data, error } = await supabase
-      .from('appointments')
-      .update({ status })
-      .eq('id', id)
-      .select()
-      .single();
+    const appointment = await db.createAppointment({
+      full_name,
+      phone_number,
+      gender,
+      location,
+      service,
+      preferred_time
+    });
 
-    if (error) {
-      console.error('Error updating appointment:', error);
-      return NextResponse.json(
-        { error: 'Failed to update appointment' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true, appointment: data });
+    return NextResponse.json({ 
+      success: true, 
+      appointment,
+      message: 'Appointment created successfully' 
+    });
   } catch (error) {
-    console.error('Error in appointments PUT API:', error);
+    console.error('Error creating appointment:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to create appointment' },
       { status: 500 }
     );
   }
-} 
+}
