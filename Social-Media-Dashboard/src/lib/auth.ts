@@ -1,10 +1,10 @@
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
-import { createClient } from "@supabase/supabase-js"
 import bcrypt from "bcryptjs"
 import type { User } from "next-auth"
 import type { AdapterUser } from "next-auth/adapters"
+import { db } from './db'
 
 // Extend the built-in types
 declare module "next-auth" {
@@ -22,10 +22,7 @@ declare module "next-auth" {
   }
 }
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// Using PostgreSQL database directly instead of Supabase
 
 export const authOptions = {
   providers: [
@@ -41,14 +38,10 @@ export const authOptions = {
         }
 
         try {
-          // Get user from Supabase
-          const { data: user, error } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', credentials.email)
-            .single()
+          // Get user from PostgreSQL database
+          const user = await db.findUserByEmail(credentials.email)
 
-          if (error || !user) {
+          if (!user) {
             return null
           }
 
@@ -60,10 +53,7 @@ export const authOptions = {
           }
 
           // Update last login
-          await supabase
-            .from('users')
-            .update({ last_login: new Date().toISOString() })
-            .eq('id', user.id)
+          await db.updateLastLogin(user.id)
 
           return {
             id: user.id,
@@ -118,26 +108,11 @@ export const authOptions = {
       if (account?.provider === "google" || account?.provider === "facebook") {
         try {
           // Check if user exists
-          const { data: existingUser } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', user.email!)
-            .single()
+          const existingUser = await db.findUserByEmail(user.email!)
 
           if (!existingUser) {
             // Create new user for OAuth
-            const { error } = await supabase
-              .from('users')
-              .insert({
-                email: user.email!,
-                name: user.name!,
-                password: '' // Empty for OAuth users
-              })
-
-            if (error) {
-              console.error('Error creating OAuth user:', error)
-              return false
-            }
+            await db.createUser(user.name!, user.email!, '') // Empty password for OAuth users
           }
         } catch (error) {
           console.error('OAuth sign in error:', error)

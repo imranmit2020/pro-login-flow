@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { supabaseAdmin } from '@/lib/supabase'
+import { db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,11 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const { data: existingUser } = await supabaseAdmin
-      .from('users')
-      .select('email')
-      .eq('email', email)
-      .single()
+    const existingUser = await db.findUserByEmail(email)
 
     if (existingUser) {
       return NextResponse.json(
@@ -31,19 +27,10 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    // Create user in Supabase
-    const { data: user, error } = await supabaseAdmin
-      .from('users')
-      .insert({
-        name,
-        email,
-        password: hashedPassword
-      })
-      .select('id, name, email')
-      .single()
+    // Create user in PostgreSQL database
+    const user = await db.createUser(name, email, hashedPassword)
 
-    if (error) {
-      console.error('Registration error:', error)
+    if (!user) {
       return NextResponse.json(
         { error: 'Failed to create user' },
         { status: 500 }

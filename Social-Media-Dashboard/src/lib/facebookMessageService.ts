@@ -1,10 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
 import { FacebookMessage } from './facebookApi';
-
-// Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Facebook page configurations
 const FACEBOOK_PAGES = [
@@ -45,7 +39,7 @@ export class FacebookMessageService {
     return FACEBOOK_PAGES.some(page => page.id === senderId || page.id === receiptId);
   }
 
-  // Store a single Facebook message
+  // Store a single Facebook message (via API)
   static async storeMessage(message: FacebookMessage, conversationId: string): Promise<void> {
     try {
       // Check if message is from our page (outgoing)
@@ -70,15 +64,15 @@ export class FacebookMessageService {
         reply_message_id: null
       };
 
-      const { error } = await supabase
-        .from('facebook_messages')
-        .upsert(storedMessage, {
-          onConflict: 'message_id'
-        });
+      // Store via API endpoint instead of direct database call
+      const response = await fetch('/api/facebook/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(storedMessage)
+      });
 
-      if (error) {
-        console.error('Error storing Facebook message:', error);
-        throw error;
+      if (!response.ok) {
+        throw new Error('Failed to store message');
       }
     } catch (error) {
       console.error('Failed to store Facebook message:', error);
@@ -113,15 +107,15 @@ export class FacebookMessageService {
         };
       });
 
-      const { error } = await supabase
-        .from('facebook_messages')
-        .upsert(storedMessages, {
-          onConflict: 'message_id'
-        });
+      // Store messages via API endpoint
+      const response = await fetch('/api/facebook/messages/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: storedMessages })
+      });
 
-      if (error) {
-        console.error('Error storing Facebook messages:', error);
-        throw error;
+      if (!response.ok) {
+        throw new Error('Failed to store messages');
       }
     } catch (error) {
       console.error('Failed to store Facebook messages:', error);
@@ -132,18 +126,14 @@ export class FacebookMessageService {
   // Mark a message as replied
   static async markMessageAsReplied(messageId: string, repliedBy: 'AI' | 'human', replyMessageId: string): Promise<void> {
     try {
-      const { error } = await supabase
-        .from('facebook_messages')
-        .update({
-          is_replied: true,
-          replied_by: repliedBy,
-          reply_message_id: replyMessageId
-        })
-        .eq('message_id', messageId);
+      const response = await fetch('/api/facebook/messages/reply', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messageId, repliedBy, replyMessageId })
+      });
 
-      if (error) {
-        console.error('Error marking message as replied:', error);
-        throw error;
+      if (!response.ok) {
+        throw new Error('Failed to mark message as replied');
       }
     } catch (error) {
       console.error('Failed to mark message as replied:', error);
@@ -154,44 +144,21 @@ export class FacebookMessageService {
   // Get unreplied messages
   static async getUnrepliedMessages(): Promise<StoredFacebookMessage[]> {
     try {
-      const { data, error } = await supabase
-        .from('facebook_messages')
-        .select('*')
-        .eq('is_replied', false)
-        .order('timestamp', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching unreplied messages:', error);
-        throw error;
+      const response = await fetch('/api/facebook/messages/unreplied');
+      if (!response.ok) {
+        throw new Error('Failed to fetch unreplied messages');
       }
-
-      return data;
+      return await response.json();
     } catch (error) {
       console.error('Failed to fetch unreplied messages:', error);
       throw error;
     }
   }
 
-  // Subscribe to new messages
+  // Subscribe to new messages (disabled for PostgreSQL, would need websocket implementation)
   static subscribeToNewMessages(callback: (message: StoredFacebookMessage) => void): (() => void) {
-    const subscription = supabase
-      .channel('facebook_messages_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'facebook_messages'
-        },
-        (payload) => {
-          callback(payload.new as StoredFacebookMessage);
-        }
-      )
-      .subscribe();
-
-    // Return unsubscribe function
-    return () => {
-      subscription.unsubscribe();
-    };
+    console.log('Real-time subscriptions not implemented for PostgreSQL setup');
+    // Return a no-op unsubscribe function
+    return () => {};
   }
 } 
