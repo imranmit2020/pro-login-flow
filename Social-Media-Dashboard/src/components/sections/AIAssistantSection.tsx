@@ -181,41 +181,46 @@ export function AIAssistantSection() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
+    <div className="flex flex-col h-[calc(100vh-10rem)] bg-gradient-to-br from-gray-50/80 to-blue-50/40 mobile-enhanced">
+      {/* Enhanced Header */}
+      <div className="glass-card border-b border-gray-200/60 mobile-card-spacing lg:px-6 lg:py-4 flex items-center gap-4 animate-slide-in-left">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl">
+          <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl micro-interact animate-gentle-pulse">
             <Brain className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">AI Assistant</h1>
-            <p className="text-sm text-gray-600">Intelligent practice management support</p>
+            <h1 className="text-responsive-lg font-bold text-gray-900 tracking-tight">AI Assistant</h1>
+            <p className="text-sm text-gray-600 mobile-text-responsive">Intelligent practice management support</p>
           </div>
         </div>
         
-        <div className="ml-auto flex items-center gap-4">
-          <div className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            AI Online
+        <div className="ml-auto flex items-center gap-4 animate-slide-in-right">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium border border-emerald-200/60 modern-card">
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-gentle-pulse" />
+            <span className="hidden sm:inline">AI Online</span>
+            <span className="sm:hidden">Online</span>
           </div>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="px-6 py-4 bg-white border-b border-gray-200">
-        <div className="flex flex-wrap gap-2">
+      {/* Enhanced Quick Actions */}
+      <div className="glass-card border-b border-gray-200/60 mobile-card-spacing lg:px-6 lg:py-4">
+        <div className="mobile-nav-enhanced lg:flex lg:flex-wrap lg:gap-2">
           {quickActions.map((action, index) => (
             <Button
               key={index}
               variant="outline"
               size="sm"
-              className={`${action.color} border-none font-medium`}
+              className={cn(
+                `${action.color} border-none font-medium modern-button mobile-button-enhanced transition-smooth animate-slide-in-right`,
+                "mobile-nav-item-enhanced"
+              )}
               onClick={() => handleQuickAction(action.query)}
               disabled={isLoading}
+              style={{animationDelay: `${index * 100}ms`}}
             >
               {action.icon}
-              {action.label}
+              <span className="ml-2">{action.label}</span>
             </Button>
           ))}
         </div>
@@ -328,29 +333,30 @@ export function AIAssistantSection() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="border-t border-gray-200 bg-white px-6 py-4">
-        <div className="flex gap-4">
+      {/* Enhanced Input */}
+      <div className="border-t border-gray-200/60 glass-card mobile-card-spacing lg:px-6 lg:py-4 safe-area-bottom">
+        <div className="flex gap-3 mobile-enhanced lg:gap-4">
           <div className="flex-1">
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask me anything about your practice... (e.g., 'Show me today's appointments' or 'What tasks need attention?')"
+              placeholder="Ask me anything about your practice..."
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               disabled={isLoading}
-              className="text-sm"
+              className="mobile-text-responsive border-gray-300/60 rounded-xl focus:border-purple-400 focus:ring-purple-400/20"
             />
           </div>
           <Button
             onClick={() => handleSendMessage()}
             disabled={isLoading || !inputValue.trim()}
-            className="px-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            className="mobile-button-enhanced modern-button bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl"
           >
             {isLoading ? (
               <Clock className="w-4 h-4 animate-spin" />
             ) : (
               <Send className="w-4 h-4" />
             )}
+            <span className="hidden sm:inline ml-2">Send</span>
           </Button>
         </div>
       </div>

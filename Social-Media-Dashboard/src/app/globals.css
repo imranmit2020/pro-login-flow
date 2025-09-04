@@ -77,12 +77,37 @@
   --sidebar-border: oklch(0.90 0.02 240);
   --sidebar-ring: oklch(0.55 0.15 220);
   
-  /* Dental Practice Theme Colors */
+  /* Enhanced Dental Practice Theme Colors */
   --dental-blue: oklch(0.55 0.15 220);
   --dental-teal: oklch(0.65 0.12 180);
   --dental-mint: oklch(0.85 0.08 160);
   --dental-white: oklch(0.99 0.01 240);
   --dental-gray: oklch(0.50 0.02 240);
+  
+  /* Modern UI Enhancement Colors */
+  --ui-purple: oklch(0.58 0.18 290);
+  --ui-pink: oklch(0.68 0.15 330);
+  --ui-emerald: oklch(0.72 0.12 155);
+  --ui-amber: oklch(0.75 0.15 75);
+  --ui-rose: oklch(0.65 0.18 15);
+  
+  /* Glass Morphism Variables */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(20px);
+  
+  /* Shadow System */
+  --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px -5px rgba(59, 130, 246, 0.3);
+  
+  /* Animation Timing */
+  --timing-fast: 0.15s;
+  --timing-normal: 0.25s;
+  --timing-slow: 0.4s;
+  --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* Dark mode disabled - always use light theme */
@@ -127,7 +152,32 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    letter-spacing: -0.01em;
+  }
+  
+  /* Improved focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid oklch(0.55 0.15 220);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Enhanced typography hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Better default spacing */
+  p {
+    @apply leading-relaxed;
   }
 }
 
@@ -616,6 +666,21 @@ body.dark {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Safari and Chrome */
   }
+  
+  /* Fix for mobile nav enhanced */
+  .mobile-nav-enhanced {
+    display: flex;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .mobile-nav-enhanced::-webkit-scrollbar {
+    display: none;
+  }
 
   /* Custom scrollbar for sidebar */
   .sidebar-scroll::-webkit-scrollbar {
@@ -661,5 +726,229 @@ body.dark {
 
   .mobile-nav-item {
     scroll-snap-align: start;
+  }
+  
+  /* Enhanced Modern UI Components */
+  .modern-card {
+    @apply bg-white/90 backdrop-blur-sm border border-gray-200/60 rounded-2xl;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .modern-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    transform: scale(1.01) translateY(-2px);
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+  
+  .modern-button {
+    @apply relative overflow-hidden rounded-xl font-medium;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .modern-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px -5px rgba(59, 130, 246, 0.3);
+  }
+  
+  .modern-button:active {
+    transform: scale(0.95);
+  }
+  
+  /* Glass Morphism Components */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Gradient Overlays */
+  .gradient-overlay-purple {
+    background: linear-gradient(135deg, var(--ui-purple) 0%, var(--ui-pink) 100%);
+  }
+  
+  .gradient-overlay-blue {
+    background: linear-gradient(135deg, var(--dental-blue) 0%, var(--dental-teal) 100%);
+  }
+  
+  .gradient-overlay-emerald {
+    background: linear-gradient(135deg, var(--ui-emerald) 0%, var(--dental-mint) 100%);
+  }
+  
+  /* Enhanced Animations */
+  @keyframes slideInFromRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInFromLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3) translateY(-50px);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05) translateY(0);
+    }
+    70% {
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes gentlePulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.02);
+    }
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInFromRight 0.5s var(--easing-smooth);
+  }
+  
+  .animate-slide-in-left {
+    animation: slideInFromLeft 0.5s var(--easing-smooth);
+  }
+  
+  .animate-fade-scale {
+    animation: fadeInScale 0.4s var(--easing-smooth);
+  }
+  
+  .animate-bounce-in {
+    animation: bounceIn 0.6s var(--easing-bounce);
+  }
+  
+  .animate-gentle-pulse {
+    animation: gentlePulse 2s ease-in-out infinite;
+  }
+  
+  /* Micro Interactions */
+  .micro-interact {
+    transition: all var(--timing-fast) var(--easing-smooth);
+  }
+  
+  .micro-interact:hover {
+    @apply transform scale-102;
+  }
+  
+  .micro-interact:active {
+    @apply transform scale-98;
+  }
+  
+  /* Enhanced Mobile Responsiveness */
+  @media (max-width: 640px) {
+    .mobile-enhanced {
+      @apply p-4 space-y-3;
+    }
+    
+    .mobile-text-responsive {
+      @apply text-sm leading-relaxed;
+    }
+    
+    .mobile-button-enhanced {
+      @apply py-3 px-6 text-base min-h-[44px] rounded-xl;
+    }
+    
+    .mobile-card-spacing {
+      @apply p-4 space-y-4;
+    }
+    
+    /* Better touch targets */
+    .mobile-touch-target {
+      @apply min-w-[44px] min-h-[44px];
+    }
+    
+    /* Improved mobile navigation */
+    .mobile-nav-enhanced {
+      @apply flex overflow-x-auto scrollbar-hide space-x-2 pb-2;
+      scroll-snap-type: x mandatory;
+    }
+    
+    .mobile-nav-item-enhanced {
+      @apply flex-shrink-0 scroll-snap-align-start;
+    }
+  }
+  
+  /* Tablet Optimizations */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .tablet-grid {
+      @apply grid-cols-2 gap-6;
+    }
+    
+    .tablet-spacing {
+      @apply p-6 space-y-6;
+    }
+  }
+  
+  /* Desktop Enhancements */
+  @media (min-width: 1025px) {
+    .desktop-grid {
+      @apply grid-cols-3 gap-8;
+    }
+    
+    .desktop-spacing {
+      @apply p-8 space-y-8;
+    }
+    
+    .desktop-hover-lift {
+      transition: all var(--timing-normal) var(--easing-smooth);
+    }
+    
+    .desktop-hover-lift:hover {
+      @apply shadow-2xl transform -translate-y-2 scale-[1.02];
+    }
+  }
+  
+  /* Advanced Loading States */
+  .skeleton-loading {
+    @apply bg-gray-200 rounded animate-pulse;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  /* Dark mode override to maintain light theme */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: light;
+    }
   }
 }

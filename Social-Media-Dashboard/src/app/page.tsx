@@ -126,27 +126,36 @@ function DashboardContent() {
         />
         
         <main className="flex-1 min-w-0">
-          {/* Mobile header */}
-          <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-background border-b border-border">
+          {/* Enhanced Mobile header */}
+          <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between mobile-enhanced glass-card border-b border-gray-200/60 safe-area-top">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setSidebarOpen(true)}
+              className="mobile-touch-target modern-button"
             >
               <Menu className="h-5 w-5" />
             </Button>
+            
+            {/* Mobile Title */}
+            <div className="flex items-center gap-2">
+              <h1 className="font-bold text-lg text-gradient-blue tracking-tight">OfinaPulse</h1>
+            </div>
+            
             <div className="flex items-center gap-2">
               <ThemeToggler />
             </div>
           </div>
 
-          {/* Main content area */}
-          <section className="p-4 lg:p-6 min-h-screen">
-            <DashboardHome 
-              section={selectedSection} 
-              analyticsSubSection={analyticsSubSection}
-              onAnalyticsSubSelect={handleAnalyticsSubSelect}
-            />
+          {/* Enhanced Main content area */}
+          <section className="mobile-enhanced lg:desktop-spacing min-h-screen bg-gradient-to-br from-gray-50/50 to-blue-50/30 safe-area-bottom">
+            <div className="animate-fade-scale">
+              <DashboardHome 
+                section={selectedSection} 
+                analyticsSubSection={analyticsSubSection}
+                onAnalyticsSubSelect={handleAnalyticsSubSelect}
+              />
+            </div>
           </section>
         </main>
       </div>

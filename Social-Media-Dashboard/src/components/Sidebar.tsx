@@ -208,9 +208,9 @@ export function Sidebar({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <span className={cn(
-                          "font-medium text-sm sidebar-content-transition",
-                          isSelected && "text-foreground dark:text-white",
-                          !isSelected && "text-foreground group-hover:text-foreground dark:group-hover:text-white"
+                          "font-semibold text-sm sidebar-content-transition tracking-tight",
+                          isSelected && "text-gray-900 font-bold",
+                          !isSelected && "text-gray-700 group-hover:text-gray-900"
                         )}>
                           {item.label}
                         </span>
