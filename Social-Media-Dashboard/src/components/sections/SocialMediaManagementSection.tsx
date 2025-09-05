@@ -49,7 +49,7 @@ export function SocialMediaManagementSection() {
               Social Media Management
             </h1>
             <p className="text-gray-600">
-              Create, schedule, and manage your dental practice's social media presence across all platforms.
+              Create, schedule, and manage your business's social media presence across all platforms.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -104,7 +104,7 @@ export function SocialMediaManagementSection() {
                   Create New Post
                 </CardTitle>
                 <CardDescription>
-                  Craft engaging content for your dental practice
+                  Craft engaging content for your business
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
@@ -113,7 +113,7 @@ export function SocialMediaManagementSection() {
                     Post Content
                   </label>
                   <textarea
-                    placeholder="Share updates about your dental practice, tips for oral health, or showcase your services..."
+                    placeholder="Share updates about your business, industry insights, or showcase your services..."
                     className="w-full h-32 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
                   />
                 </div>
@@ -165,18 +165,18 @@ export function SocialMediaManagementSection() {
                   AI Content Assistant
                 </CardTitle>
                 <CardDescription>
-                  Generate engaging content tailored for dental practices
+                  Generate engaging content tailored for your business
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    "Oral Health Tips",
+                    "Industry Tips",
                     "Service Showcase",
-                    "Patient Testimonial",
+                    "Customer Testimonial",
                     "Appointment Reminder",
-                    "Dental Care Facts",
-                    "Practice Updates"
+                    "Business Updates",
+                    "Team Highlights"
                   ].map((template) => (
                     <Button
                       key={template}
@@ -247,7 +247,7 @@ export function SocialMediaManagementSection() {
             <CardHeader>
               <CardTitle>Content Templates</CardTitle>
               <CardDescription>
-                Pre-designed templates for dental practice content
+                Pre-designed templates for professional business content
               </CardDescription>
             </CardHeader>
             <CardContent>
