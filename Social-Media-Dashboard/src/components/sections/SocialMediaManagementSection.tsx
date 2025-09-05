@@ -505,7 +505,39 @@ export function SocialMediaManagementSection() {
                     </div>
                   </div>
                 </div>
+
+                {/* Platform Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Social Media Platforms
+                  </label>
+                  <div className="flex gap-2 flex-wrap">
+                    {[
+                      { name: "facebook", label: "Facebook", icon: Facebook, color: "blue" },
+                      { name: "instagram", label: "Instagram", icon: Instagram, color: "pink" },
+                      { name: "linkedin", label: "LinkedIn", icon: Linkedin, color: "blue" }
+                    ].map((platform) => {
+                      const Icon = platform.icon;
+                      const isSelected = selectedPlatforms.includes(platform.name);
+                      return (
+                        <Button
+                          key={platform.name}
+                          variant={isSelected ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => togglePlatform(platform.name)}
+                          className={`flex items-center gap-2 ${
+                            isSelected ? 'bg-indigo-600 hover:bg-indigo-700' : ''
+                          }`}
+                        >
+                          <Icon className="w-4 h-4" />
+                          {platform.label}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
                 
+                {/* Generate Content Button */}
                 <Button 
                   onClick={generateAIPost}
                   disabled={isGeneratingPost || !composerBusinessInfo}
@@ -524,59 +556,24 @@ export function SocialMediaManagementSection() {
                   )}
                 </Button>
 
-                {/* Platform Selection for Generated Content */}
-                {postContent && (
-                  <div className="space-y-4 pt-4 border-t border-gray-200">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Platforms to Post
-                      </label>
-                      <div className="flex gap-2">
-                        {[
-                          { name: "facebook", label: "Facebook", icon: Facebook, color: "blue" },
-                          { name: "instagram", label: "Instagram", icon: Instagram, color: "pink" },
-                          { name: "linkedin", label: "LinkedIn", icon: Linkedin, color: "blue" }
-                        ].map((platform) => {
-                          const Icon = platform.icon;
-                          const isSelected = selectedPlatforms.includes(platform.name);
-                          return (
-                            <Button
-                              key={platform.name}
-                              variant={isSelected ? "default" : "outline"}
-                              size="sm"
-                              onClick={() => togglePlatform(platform.name)}
-                              className={`flex items-center gap-2 ${
-                                isSelected ? 'bg-indigo-600 hover:bg-indigo-700' : ''
-                              }`}
-                            >
-                              <Icon className="w-4 h-4" />
-                              {platform.label}
-                            </Button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Post Actions */}
-                    <div className="flex gap-2">
-                      <Button 
-                        disabled={!postContent || selectedPlatforms.length === 0}
-                        className="flex-1 bg-indigo-600 hover:bg-indigo-700"
-                      >
-                        <Send className="w-4 h-4 mr-2" />
-                        Post Now
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        className="flex-1"
-                        disabled={!postContent || selectedPlatforms.length === 0}
-                      >
-                        <Calendar className="w-4 h-4 mr-2" />
-                        Schedule
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                {/* Post and Schedule Actions */}
+                <div className="flex gap-2">
+                  <Button 
+                    disabled={!postContent || selectedPlatforms.length === 0}
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Post
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    disabled={!postContent || selectedPlatforms.length === 0}
+                  >
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Schedule
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
