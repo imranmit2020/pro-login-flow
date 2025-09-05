@@ -27,7 +27,18 @@ import {
   TrendingUp,
   ChevronRight,
   RefreshCw,
-  EyeOff
+  EyeOff,
+  Zap,
+  Target,
+  Mail,
+  Phone,
+  Globe,
+  Wand2,
+  Megaphone,
+  TrendingUp as TrendingUpIcon,
+  DollarSign,
+  BarChart,
+  Loader2
 } from "lucide-react";
 import { useSocialPages } from "@/hooks/useSocialPages";
 
@@ -77,6 +88,14 @@ const Label = ({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelEleme
 export function SocialMediaManagementSection() {
   const [activeTab, setActiveTab] = useState("composer");
   const [posts] = useState<Post[]>([]);
+  
+  // AI Broadcasting state
+  const [broadcastContent, setBroadcastContent] = useState('');
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+  const [audienceSize, setAudienceSize] = useState(0);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [campaignType, setCampaignType] = useState('sales');
+  const [businessInfo, setBusinessInfo] = useState('');
   
   // Social Pages functionality
   const { pages, loading, error, refetch } = useSocialPages();
@@ -140,6 +159,64 @@ export function SocialMediaManagementSection() {
     }));
   };
 
+  // AI Broadcasting handlers
+  const generateAIContent = async () => {
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/ai/generate-broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          campaignType,
+          businessInfo,
+          channels: selectedChannels
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setBroadcastContent(data.content);
+      }
+    } catch (error) {
+      console.error('Error generating content:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const sendBroadcast = async () => {
+    if (!broadcastContent || selectedChannels.length === 0) return;
+    
+    try {
+      const response = await fetch('/api/broadcast/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: broadcastContent,
+          channels: selectedChannels,
+          campaignType
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        // Show success message and reset form
+        setBroadcastContent('');
+        setSelectedChannels([]);
+      }
+    } catch (error) {
+      console.error('Error sending broadcast:', error);
+    }
+  };
+
+  const toggleChannel = (channel: string) => {
+    setSelectedChannels(prev => 
+      prev.includes(channel) 
+        ? prev.filter(c => c !== channel)
+        : [...prev, channel]
+    );
+  };
+
   return (
     <div className="space-y-6 animate-fade-in-up">
       {/* Header */}
@@ -170,6 +247,7 @@ export function SocialMediaManagementSection() {
         <nav className="flex space-x-8">
           {[
             { id: "composer", label: "Post Composer", icon: Plus },
+            { id: "broadcast", label: "AI Broadcasting", icon: Zap },
             { id: "pages", label: "Pages & Accounts", icon: Settings },
             { id: "calendar", label: "Content Calendar", icon: Calendar },
             { id: "analytics", label: "Analytics", icon: BarChart3 },
@@ -295,6 +373,233 @@ export function SocialMediaManagementSection() {
                   <Sparkles className="w-4 h-4 mr-2" />
                   Generate Content
                 </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {activeTab === "broadcast" && (
+          <div className="space-y-6">
+            {/* Broadcasting Overview */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <Card className="lg:col-span-3">
+                <CardHeader className="bg-gradient-to-r from-orange-50 to-red-50">
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-orange-600" />
+                    AI-Powered Multi-Channel Broadcasting
+                  </CardTitle>
+                  <CardDescription>
+                    Generate engaging content with AI and broadcast across SMS, Email, and Social Media to boost sales
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6 p-6">
+                  {/* Campaign Type Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Campaign Type
+                    </label>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                      {[
+                        { id: 'sales', label: 'Sales Boost', icon: DollarSign, color: 'green' },
+                        { id: 'engagement', label: 'Engagement', icon: Heart, color: 'pink' },
+                        { id: 'announcement', label: 'Announcement', icon: Megaphone, color: 'blue' },
+                        { id: 'promotion', label: 'Promotion', icon: Target, color: 'purple' }
+                      ].map((type) => {
+                        const Icon = type.icon;
+                        return (
+                          <Button
+                            key={type.id}
+                            variant={campaignType === type.id ? 'default' : 'outline'}
+                            onClick={() => setCampaignType(type.id)}
+                            className={`flex flex-col items-center gap-2 h-auto py-4 ${
+                              campaignType === type.id ? `bg-${type.color}-600 hover:bg-${type.color}-700` : ''
+                            }`}
+                          >
+                            <Icon className="w-5 h-5" />
+                            <span className="text-xs">{type.label}</span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Business Information */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Business Information (Help AI understand your business)
+                    </label>
+                    <textarea
+                      value={businessInfo}
+                      onChange={(e) => setBusinessInfo(e.target.value)}
+                      placeholder="Describe your business, products, services, target audience, and current offers..."
+                      className="w-full h-24 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                    />
+                  </div>
+
+                  {/* Channel Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Select Broadcasting Channels
+                    </label>
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                      {[
+                        { id: 'sms', label: 'SMS', icon: Phone, color: 'green', description: 'Text Messages' },
+                        { id: 'email', label: 'Email', icon: Mail, color: 'blue', description: 'Email Marketing' },
+                        { id: 'facebook', label: 'Facebook', icon: Facebook, color: 'blue', description: 'Facebook Posts' },
+                        { id: 'instagram', label: 'Instagram', icon: Instagram, color: 'pink', description: 'Instagram Posts' },
+                        { id: 'linkedin', label: 'LinkedIn', icon: Linkedin, color: 'blue', description: 'LinkedIn Posts' }
+                      ].map((channel) => {
+                        const Icon = channel.icon;
+                        const isSelected = selectedChannels.includes(channel.id);
+                        return (
+                          <Button
+                            key={channel.id}
+                            variant={isSelected ? 'default' : 'outline'}
+                            onClick={() => toggleChannel(channel.id)}
+                            className={`flex flex-col items-center gap-2 h-auto py-4 ${
+                              isSelected ? `bg-${channel.color}-600 hover:bg-${channel.color}-700` : ''
+                            }`}
+                          >
+                            <Icon className="w-5 h-5" />
+                            <div className="text-center">
+                              <div className="text-xs font-medium">{channel.label}</div>
+                              <div className="text-xs opacity-75">{channel.description}</div>
+                            </div>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* AI Content Generation */}
+                  <div className="bg-gradient-to-r from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Wand2 className="w-5 h-5 text-orange-600" />
+                        <span className="font-medium text-orange-900">AI Content Generator</span>
+                      </div>
+                      <Button
+                        onClick={generateAIContent}
+                        disabled={isGenerating || !businessInfo || selectedChannels.length === 0}
+                        className="bg-orange-600 hover:bg-orange-700"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Generate Content
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    
+                    <textarea
+                      value={broadcastContent}
+                      onChange={(e) => setBroadcastContent(e.target.value)}
+                      placeholder="AI-generated content will appear here, or write your own message..."
+                      className="w-full h-32 p-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none bg-white"
+                    />
+                  </div>
+
+                  {/* Broadcast Actions */}
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <div className="text-sm text-gray-600">
+                      {selectedChannels.length > 0 ? (
+                        <>Broadcasting to <span className="font-medium">{selectedChannels.length}</span> channel{selectedChannels.length !== 1 ? 's' : ''}</>
+                      ) : (
+                        'Select channels to broadcast'
+                      )}
+                    </div>
+                    <div className="flex gap-3">
+                      <Button variant="outline" className="flex items-center gap-2">
+                        <Eye className="w-4 h-4" />
+                        Preview
+                      </Button>
+                      <Button
+                        onClick={sendBroadcast}
+                        disabled={!broadcastContent || selectedChannels.length === 0}
+                        className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 flex items-center gap-2"
+                      >
+                        <Send className="w-4 h-4" />
+                        Send Broadcast
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Broadcasting Stats */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Campaign Performance</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="text-center p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                    <div className="text-2xl font-bold text-green-600">24.5%</div>
+                    <div className="text-xs text-muted-foreground">Avg. Response Rate</div>
+                  </div>
+                  
+                  <div className="text-center p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                    <div className="text-2xl font-bold text-blue-600">1.2K</div>
+                    <div className="text-xs text-muted-foreground">Messages Sent</div>
+                  </div>
+                  
+                  <div className="text-center p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
+                    <div className="text-2xl font-bold text-purple-600">$890</div>
+                    <div className="text-xs text-muted-foreground">Sales Generated</div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-200">
+                    <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700">
+                      <BarChart className="w-4 h-4 mr-2" />
+                      View Full Analytics
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Campaigns */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Campaigns</CardTitle>
+                <CardDescription>Track your latest broadcasting campaigns and their performance</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { id: 1, title: 'Holiday Sale Announcement', channels: ['SMS', 'Email', 'Facebook'], sent: '2 hours ago', response: '28%', sales: '$450' },
+                    { id: 2, title: 'New Product Launch', channels: ['Instagram', 'LinkedIn', 'Email'], sent: '1 day ago', response: '22%', sales: '$230' },
+                    { id: 3, title: 'Customer Appreciation', channels: ['SMS', 'Facebook'], sent: '3 days ago', response: '31%', sales: '$180' }
+                  ].map((campaign) => (
+                    <div key={campaign.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div>
+                        <h4 className="font-medium text-gray-900">{campaign.title}</h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-sm text-gray-600">Channels:</span>
+                          <div className="flex gap-1">
+                            {campaign.channels.map((channel) => (
+                              <Badge key={channel} variant="secondary" className="text-xs">
+                                {channel}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-600">{campaign.sent}</div>
+                        <div className="flex items-center gap-4 mt-1">
+                          <span className="text-sm font-medium text-green-600">{campaign.response} response</span>
+                          <span className="text-sm font-medium text-blue-600">{campaign.sales} sales</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>
