@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, MessageCircle, Settings, X, BarChart3, Zap, Activity, Globe, ChevronLeft, ChevronRight, Brain } from "lucide-react";
+import { Home, MessageCircle, Settings, X, BarChart3, Zap, Activity, Globe, ChevronLeft, ChevronRight, Brain, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +27,13 @@ const navItems = [
     icon: Globe,
     gradient: "from-green-500 to-emerald-500",
     description: "Manage accounts"
+  },
+  { 
+    key: "social-management", 
+    label: "Social Media Manager", 
+    icon: Share2,
+    gradient: "from-violet-500 to-indigo-500",
+    description: "Create & schedule posts"
   },
   { 
     key: "ai-assistant", 
