@@ -4,10 +4,13 @@ import {
   Bell,
   Search,
   User,
-  Menu,
-  BarChart3,
-  MessageSquare,
-  Phone
+  ChevronDown,
+  Home,
+  CheckSquare,
+  Share2,
+  Phone,
+  Calendar,
+  BarChart3
 } from "lucide-react";
 
 interface TopNavigationProps {
@@ -18,6 +21,15 @@ interface TopNavigationProps {
   onToggleSidebar: () => void;
 }
 
+const topNavItems = [
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'tasks', label: 'Tasks', icon: CheckSquare },
+  { id: 'social', label: 'Social', icon: Share2 },
+  { id: 'calls', label: 'Calls', icon: Phone },
+  { id: 'calendar', label: 'Calendar', icon: Calendar },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+];
+
 export function TopNavigation({
   selectedSection,
   onSelect,
@@ -26,84 +38,56 @@ export function TopNavigation({
   onToggleSidebar
 }: TopNavigationProps) {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-14 items-center justify-between px-4">
-        {/* Left section */}
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleSidebar}
-            className="lg:hidden"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          
-          {/* Breadcrumb or section indicator */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Dashboard</span>
-            <span className="text-sm text-muted-foreground">/</span>
-            <span className="text-sm font-medium capitalize">
-              {selectedSection === 'home' ? 'Overview' : selectedSection}
-            </span>
-            {selectedSection === 'analytics' && analyticsSubSection && (
-              <>
-                <span className="text-sm text-muted-foreground">/</span>
-                <Badge variant="secondary" className="text-xs">
-                  {analyticsSubSection}
-                </Badge>
-              </>
-            )}
-          </div>
+    <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200">
+      <div className="flex h-16 items-center justify-between px-6">
+        {/* Left section - Navigation */}
+        <div className="flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
+            {topNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = selectedSection === item.id;
+              
+              return (
+                <button
+                  key={item.id}
+                  className={`
+                    flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all
+                    ${isActive 
+                      ? 'text-blue-600 bg-blue-50' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }
+                  `}
+                  onClick={() => onSelect(item.id)}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
         </div>
         
-        {/* Center section - Quick actions for analytics */}
-        {selectedSection === 'analytics' && (
-          <div className="hidden md:flex items-center gap-2">
-            <Button
-              variant={analyticsSubSection === 'overview' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onAnalyticsSubSelect('overview')}
-            >
-              <BarChart3 className="h-4 w-4 mr-1" />
-              Overview
-            </Button>
-            <Button
-              variant={analyticsSubSection === 'messages' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onAnalyticsSubSelect('messages')}
-            >
-              <MessageSquare className="h-4 w-4 mr-1" />
-              Messages
-            </Button>
-            <Button
-              variant={analyticsSubSection === 'calls' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onAnalyticsSubSelect('calls')}
-            >
-              <Phone className="h-4 w-4 mr-1" />
-              Calls
-            </Button>
-          </div>
-        )}
-        
-        {/* Right section */}
-        <div className="flex items-center gap-2">
-          {/* Search button */}
-          <Button variant="ghost" size="icon">
+        {/* Right section - User info */}
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700">
             <Search className="h-4 w-4" />
           </Button>
           
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="text-gray-500 hover:text-gray-700 relative">
             <Bell className="h-4 w-4" />
             <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
           </Button>
           
-          {/* User menu */}
-          <Button variant="ghost" size="icon">
-            <User className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
+            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+              IA
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-sm font-medium text-gray-900">Imran Ahmed</p>
+              <p className="text-xs text-gray-500">MUHAMMAD200@GMAIL.COM</p>
+            </div>
+            <ChevronDown className="h-4 w-4 text-gray-400" />
+          </div>
         </div>
       </div>
     </header>

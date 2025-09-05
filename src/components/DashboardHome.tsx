@@ -1,5 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MessageSquare, Users, Mail, Facebook, Instagram, AlertCircle, ArrowRight } from "lucide-react";
 
 interface DashboardHomeProps {
   section: string;
@@ -12,60 +14,218 @@ export function DashboardHome({ section, analyticsSubSection, onAnalyticsSubSele
     switch (section) {
       case 'home':
         return (
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">OfinaPulse Dashboard</h1>
-              <p className="text-muted-foreground">
-                Centralized communication and booking dashboard for your business
+          <div className="space-y-8 p-6">
+            {/* Main Header */}
+            <div className="text-center space-y-4">
+              <h1 className="text-4xl font-bold text-blue-600">Unified Message Manager</h1>
+              <p className="text-gray-600 text-lg">
+                Manage Facebook, Instagram, and Gmail messages with next-generation AI-powered insights
               </p>
+              <div className="flex items-center justify-center gap-4 mt-4">
+                <Badge className="bg-green-100 text-green-700 hover:bg-green-100 text-sm px-3 py-1">
+                  Live
+                </Badge>
+                <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-sm px-3 py-1">
+                  Platforms Connected
+                </Badge>
+              </div>
             </div>
             
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {/* Stats Cards */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <Card className="bg-gray-50 border-gray-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <MessageSquare className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Total Messages</p>
+                      <p className="text-2xl font-bold text-gray-900">0</p>
+                      <p className="text-xs text-blue-600">↑ 0 messages today</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gray-50 border-gray-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Users className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">New Contacts</p>
+                      <p className="text-2xl font-bold text-gray-900">0</p>
+                      <p className="text-xs text-green-600">↑ This week</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Messages by Platform and Platform Status */}
+            <div className="grid gap-6 md:grid-cols-2">
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Messages</CardTitle>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-blue-600" />
+                    <CardTitle className="text-lg">Messages by Platform (Today)</CardTitle>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">1,234</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p>
+                  <p className="text-sm text-gray-500">No messages received today</p>
                 </CardContent>
               </Card>
               
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Calls</CardTitle>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5 text-purple-600" />
+                    <CardTitle className="text-lg">Platform Status</CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">23</div>
-                  <p className="text-xs text-muted-foreground">
-                    +15% from last week
-                  </p>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                    <div className="flex items-center gap-3">
+                      <Facebook className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Facebook</p>
+                        <p className="text-xs text-gray-500">0 total messages</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                      Disconnected
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                    <div className="flex items-center gap-3">
+                      <Instagram className="h-5 w-5 text-pink-600" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Instagram</p>
+                        <p className="text-xs text-gray-500">0 total messages</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                      Disconnected
+                    </Badge>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                    <div className="flex items-center gap-3">
+                      <Mail className="h-5 w-5 text-red-600" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Gmail</p>
+                        <p className="text-xs text-gray-500">0 total messages</p>
+                      </div>
+                    </div>
+                    <Badge className="bg-red-100 text-red-700 hover:bg-red-100">
+                      Disconnected
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            {/* Platform Cards */}
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card className="border-blue-200">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                      <Facebook className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">Facebook Messages</CardTitle>
+                      <CardDescription>Patient conversations</CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-red-100 text-red-700 hover:bg-red-100 w-fit">
+                    Disconnected
+                  </Badge>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <p className="text-2xl font-bold text-blue-600">0</p>
+                      <p className="text-xs text-gray-500">TODAY</p>
+                    </div>
+                    <div className="text-center p-4 bg-blue-50 rounded-lg">
+                      <p className="text-2xl font-bold text-blue-600">0</p>
+                      <p className="text-xs text-gray-500">TOTAL</p>
+                    </div>
+                  </div>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                    View Facebook Messages
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Appointments</CardTitle>
+              <Card className="border-purple-200">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+                      <Instagram className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">Instagram Messages</CardTitle>
+                      <CardDescription>Direct messages</CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-red-100 text-red-700 hover:bg-red-100 w-fit">
+                    Disconnected
+                  </Badge>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">89</div>
-                  <p className="text-xs text-muted-foreground">
-                    +5% from yesterday
-                  </p>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <p className="text-2xl font-bold text-purple-600">0</p>
+                      <p className="text-xs text-gray-500">TODAY</p>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 rounded-lg">
+                      <p className="text-2xl font-bold text-purple-600">0</p>
+                      <p className="text-xs text-gray-500">TOTAL</p>
+                    </div>
+                  </div>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                    View Instagram DMs
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </CardContent>
               </Card>
               
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Tasks</CardTitle>
+              <Card className="border-red-200">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                      <Mail className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">Gmail Messages</CardTitle>
+                      <CardDescription>Email communications</CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-red-100 text-red-700 hover:bg-red-100 w-fit">
+                    Disconnected
+                  </Badge>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">12</div>
-                  <p className="text-xs text-muted-foreground">
-                    3 pending completion
-                  </p>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-4 bg-red-50 rounded-lg">
+                      <p className="text-2xl font-bold text-red-600">0</p>
+                      <p className="text-xs text-gray-500">TODAY</p>
+                    </div>
+                    <div className="text-center p-4 bg-red-50 rounded-lg">
+                      <p className="text-2xl font-bold text-red-600">0</p>
+                      <p className="text-xs text-gray-500">TOTAL</p>
+                    </div>
+                  </div>
+                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white">
+                    Connect Gmail
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -74,11 +234,11 @@ export function DashboardHome({ section, analyticsSubSection, onAnalyticsSubSele
         
       case 'messages':
         return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Unified Messages</h1>
+          <div className="space-y-6 p-6">
+            <h1 className="text-3xl font-bold tracking-tight">All Messages</h1>
             <Card>
               <CardHeader>
-                <CardTitle>Message Center</CardTitle>
+                <CardTitle>Unified Message Center</CardTitle>
                 <CardDescription>
                   Manage messages from Facebook, Instagram, and Gmail
                 </CardDescription>
@@ -90,107 +250,10 @@ export function DashboardHome({ section, analyticsSubSection, onAnalyticsSubSele
           </div>
         );
         
-      case 'tasks':
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
-            <Card>
-              <CardHeader>
-                <CardTitle>Task Management</CardTitle>
-                <CardDescription>
-                  Track and manage your daily tasks
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Task management interface coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-        
-      case 'analytics':
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-            <div className="flex gap-2 mb-4">
-              <Badge 
-                variant={analyticsSubSection === 'overview' ? 'default' : 'secondary'}
-                className="cursor-pointer"
-                onClick={() => onAnalyticsSubSelect('overview')}
-              >
-                Overview
-              </Badge>
-              <Badge 
-                variant={analyticsSubSection === 'messages' ? 'default' : 'secondary'}
-                className="cursor-pointer"
-                onClick={() => onAnalyticsSubSelect('messages')}
-              >
-                Messages
-              </Badge>
-              <Badge 
-                variant={analyticsSubSection === 'calls' ? 'default' : 'secondary'}
-                className="cursor-pointer"
-                onClick={() => onAnalyticsSubSelect('calls')}
-              >
-                Calls
-              </Badge>
-            </div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics Dashboard</CardTitle>
-                <CardDescription>
-                  View performance metrics and insights
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Analytics for {analyticsSubSection || 'all metrics'} coming soon...
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-        
-      case 'calls':
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Calls</h1>
-            <Card>
-              <CardHeader>
-                <CardTitle>Call Management</CardTitle>
-                <CardDescription>
-                  Manage and track your calls with ElevenLabs integration
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Call management interface coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-        
-      case 'settings':
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-            <Card>
-              <CardHeader>
-                <CardTitle>Application Settings</CardTitle>
-                <CardDescription>
-                  Configure your dashboard preferences
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">Settings interface coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-        
       default:
         return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">{section}</h1>
+          <div className="space-y-6 p-6">
+            <h1 className="text-3xl font-bold tracking-tight capitalize">{section}</h1>
             <Card>
               <CardHeader>
                 <CardTitle>Section: {section}</CardTitle>
@@ -208,7 +271,7 @@ export function DashboardHome({ section, analyticsSubSection, onAnalyticsSubSele
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gray-50">
       {renderSection()}
     </div>
   );

@@ -74,7 +74,7 @@ function DashboardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       {/* Top Navigation */}
       <TopNavigation 
         selectedSection={selectedSection}
@@ -95,25 +95,11 @@ function DashboardContent() {
         />
         
         <main className="flex-1 min-w-0">
-          {/* Mobile header */}
-          <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-background border-b border-border">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </div>
-
-          {/* Main content area */}
-          <section className="p-4 lg:p-6 min-h-screen">
-            <DashboardHome 
-              section={selectedSection} 
-              analyticsSubSection={analyticsSubSection}
-              onAnalyticsSubSelect={handleAnalyticsSubSelect}
-            />
-          </section>
+          <DashboardHome 
+            section={selectedSection} 
+            analyticsSubSection={analyticsSubSection}
+            onAnalyticsSubSelect={handleAnalyticsSubSelect}
+          />
         </main>
       </div>
     </div>
