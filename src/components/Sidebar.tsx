@@ -42,6 +42,8 @@ export function Sidebar({
   isCollapsed, 
   onToggleCollapse 
 }: SidebarProps) {
+  console.log('Sidebar rendering with props:', { selected, isOpen, isCollapsed });
+  
   return (
     <>
       {/* Mobile overlay */}

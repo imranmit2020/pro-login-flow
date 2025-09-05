@@ -4,9 +4,15 @@ import Home from "./pages/Index";
 import Auth from "./pages/Auth";
 
 function App() {
+  console.log('App component rendering');
+  console.log('Testing Tailwind - this should be styled');
+  
   return (
     <Router>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen bg-red-500 text-white">
+        <div className="p-4 bg-blue-500">
+          <h1 className="text-2xl font-bold">TAILWIND TEST</h1>
+        </div>
         <Suspense fallback={
           <div className="min-h-screen bg-background flex items-center justify-center">
             <div className="text-center">
