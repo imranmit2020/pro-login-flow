@@ -97,6 +97,17 @@ export function SocialMediaManagementSection() {
   const [campaignType, setCampaignType] = useState('sales');
   const [businessInfo, setBusinessInfo] = useState('');
   
+  // AI Post Composer state
+  const [postContent, setPostContent] = useState('');
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [isGeneratingPost, setIsGeneratingPost] = useState(false);
+  const [postType, setPostType] = useState('engagement');
+  const [postTopic, setPostTopic] = useState('');
+  const [postTone, setPostTone] = useState('professional');
+  const [includeHashtags, setIncludeHashtags] = useState(true);
+  const [includeEmojis, setIncludeEmojis] = useState(true);
+  const [composerBusinessInfo, setComposerBusinessInfo] = useState('');
+  
   // Social Pages functionality
   const { pages, loading, error, refetch } = useSocialPages();
   const [showAddPageDialog, setShowAddPageDialog] = useState(false);
@@ -217,6 +228,43 @@ export function SocialMediaManagementSection() {
     );
   };
 
+  // AI Post Generation handlers
+  const togglePlatform = (platform: string) => {
+    setSelectedPlatforms(prev => 
+      prev.includes(platform) 
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    );
+  };
+
+  const generateAIPost = async () => {
+    setIsGeneratingPost(true);
+    try {
+      const response = await fetch('/api/ai/generate-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          postType,
+          businessInfo: composerBusinessInfo,
+          platform: selectedPlatforms[0] || 'general',
+          topic: postTopic,
+          tone: postTone,
+          includeHashtags,
+          includeEmojis
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        setPostContent(data.content);
+      }
+    } catch (error) {
+      console.error('Error generating post:', error);
+    } finally {
+      setIsGeneratingPost(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in-up">
       {/* Header */}
@@ -284,7 +332,7 @@ export function SocialMediaManagementSection() {
                   Create New Post
                 </CardTitle>
                 <CardDescription>
-                  Craft engaging content for your business
+                  Craft engaging content for your social media platforms
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
@@ -293,6 +341,8 @@ export function SocialMediaManagementSection() {
                     Post Content
                   </label>
                   <textarea
+                    value={postContent}
+                    onChange={(e) => setPostContent(e.target.value)}
                     placeholder="Share updates about your business, industry insights, or showcase your services..."
                     className="w-full h-32 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
                   />
@@ -304,20 +354,24 @@ export function SocialMediaManagementSection() {
                   </label>
                   <div className="flex gap-2">
                     {[
-                      { name: "Facebook", icon: Facebook, color: "blue" },
-                      { name: "Instagram", icon: Instagram, color: "pink" },
-                      { name: "LinkedIn", icon: Linkedin, color: "blue" }
+                      { name: "facebook", label: "Facebook", icon: Facebook, color: "blue" },
+                      { name: "instagram", label: "Instagram", icon: Instagram, color: "pink" },
+                      { name: "linkedin", label: "LinkedIn", icon: Linkedin, color: "blue" }
                     ].map((platform) => {
                       const Icon = platform.icon;
+                      const isSelected = selectedPlatforms.includes(platform.name);
                       return (
                         <Button
                           key={platform.name}
-                          variant="outline"
+                          variant={isSelected ? "default" : "outline"}
                           size="sm"
-                          className="flex items-center gap-2"
+                          onClick={() => togglePlatform(platform.name)}
+                          className={`flex items-center gap-2 ${
+                            isSelected ? 'bg-violet-600 hover:bg-violet-700' : ''
+                          }`}
                         >
                           <Icon className="w-4 h-4" />
-                          {platform.name}
+                          {platform.label}
                         </Button>
                       );
                     })}
@@ -325,7 +379,10 @@ export function SocialMediaManagementSection() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button className="flex-1 bg-violet-600 hover:bg-violet-700">
+                  <Button 
+                    disabled={!postContent || selectedPlatforms.length === 0}
+                    className="flex-1 bg-violet-600 hover:bg-violet-700"
+                  >
                     <Send className="w-4 h-4 mr-2" />
                     Post Now
                   </Button>
@@ -342,36 +399,129 @@ export function SocialMediaManagementSection() {
               <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50">
                 <CardTitle className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-indigo-600" />
-                  AI Content Assistant
+                  AI Content Generator
                 </CardTitle>
                 <CardDescription>
                   Generate engaging content tailored for your business
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    "Industry Tips",
-                    "Service Showcase",
-                    "Customer Testimonial",
-                    "Appointment Reminder",
-                    "Business Updates",
-                    "Team Highlights"
-                  ].map((template) => (
-                    <Button
-                      key={template}
-                      variant="outline"
-                      size="sm"
-                      className="text-xs"
+                {/* Business Info */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Business Info (Brief)
+                  </label>
+                  <textarea
+                    value={composerBusinessInfo}
+                    onChange={(e) => setComposerBusinessInfo(e.target.value)}
+                    placeholder="Briefly describe your business, services, and target audience..."
+                    className="w-full h-20 p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none text-sm"
+                  />
+                </div>
+
+                {/* Post Type Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Post Type
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'engagement', label: 'Engagement' },
+                      { id: 'educational', label: 'Educational' },
+                      { id: 'promotional', label: 'Promotional' },
+                      { id: 'behind-the-scenes', label: 'Behind Scenes' },
+                      { id: 'inspirational', label: 'Inspirational' },
+                      { id: 'how-to', label: 'How-to Tips' }
+                    ].map((type) => (
+                      <Button
+                        key={type.id}
+                        variant={postType === type.id ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setPostType(type.id)}
+                        className={`text-xs ${
+                          postType === type.id ? 'bg-indigo-600 hover:bg-indigo-700' : ''
+                        }`}
+                      >
+                        {type.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Topic */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Topic (Optional)
+                  </label>
+                  <Input
+                    value={postTopic}
+                    onChange={(e) => setPostTopic(e.target.value)}
+                    placeholder="e.g., new product launch, industry trends..."
+                    className="text-sm"
+                  />
+                </div>
+
+                {/* Tone and Options */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tone
+                    </label>
+                    <select
+                      value={postTone}
+                      onChange={(e) => setPostTone(e.target.value)}
+                      className="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                     >
-                      {template}
-                    </Button>
-                  ))}
+                      <option value="professional">Professional</option>
+                      <option value="casual">Casual</option>
+                      <option value="friendly">Friendly</option>
+                      <option value="authoritative">Authoritative</option>
+                      <option value="playful">Playful</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Include
+                    </label>
+                    <div className="space-y-1">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={includeHashtags}
+                          onChange={(e) => setIncludeHashtags(e.target.checked)}
+                          className="rounded"
+                        />
+                        Hashtags
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={includeEmojis}
+                          onChange={(e) => setIncludeEmojis(e.target.checked)}
+                          className="rounded"
+                        />
+                        Emojis
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Generate Content
+                <Button 
+                  onClick={generateAIPost}
+                  disabled={isGeneratingPost || !composerBusinessInfo}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700"
+                >
+                  {isGeneratingPost ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Generate Content
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
