@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Users, Mail, Facebook, Instagram, AlertCircle, ArrowRight } from "lucide-react";
+import { MessageSquare, Users, Mail, Facebook, Instagram, AlertCircle, ArrowRight, Calendar, Phone, BarChart3, FileText, TrendingUp, Megaphone, User, Bot, Settings, CheckSquare, Share2 } from "lucide-react";
 
 interface DashboardHomeProps {
   section: string;
@@ -235,18 +235,388 @@ export function DashboardHome({ section, analyticsSubSection, onAnalyticsSubSele
       case 'messages':
         return (
           <div className="space-y-6 p-6">
-            <h1 className="text-3xl font-bold tracking-tight">All Messages</h1>
+            <div className="flex items-center gap-3">
+              <MessageSquare className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold text-gray-900">All Messages</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card className="border-blue-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <Facebook className="h-8 w-8 text-blue-600" />
+                    <div>
+                      <h3 className="font-semibold">Facebook Messages</h3>
+                      <p className="text-sm text-gray-500">0 unread messages</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-purple-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <Instagram className="h-8 w-8 text-purple-600" />
+                    <div>
+                      <h3 className="font-semibold">Instagram DMs</h3>
+                      <p className="text-sm text-gray-500">0 unread messages</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="border-red-200">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <Mail className="h-8 w-8 text-red-600" />
+                    <div>
+                      <h3 className="font-semibold">Gmail</h3>
+                      <p className="text-sm text-gray-500">0 unread emails</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'tasks':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <CheckSquare className="h-8 w-8 text-green-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Tasks</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pending Tasks</CardTitle>
+                  <CardDescription>Tasks requiring your attention</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No pending tasks</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Completed Tasks</CardTitle>
+                  <CardDescription>Recently completed tasks</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No completed tasks</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'social':
+      case 'overview':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Share2 className="h-8 w-8 text-purple-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Social Media Overview</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Facebook className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  <h3 className="font-semibold">Facebook</h3>
+                  <p className="text-sm text-gray-500">Manage your Facebook presence</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Instagram className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                  <h3 className="font-semibold">Instagram</h3>
+                  <p className="text-sm text-gray-500">Manage your Instagram account</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Mail className="h-12 w-12 text-red-600 mx-auto mb-4" />
+                  <h3 className="font-semibold">Email Marketing</h3>
+                  <p className="text-sm text-gray-500">Email campaigns and newsletters</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'posts':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <FileText className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Posts</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Create New Post</CardTitle>
+                  <CardDescription>Create and schedule social media posts</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full">Create Post</Button>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Scheduled Posts</CardTitle>
+                  <CardDescription>Manage your upcoming posts</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No scheduled posts</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'analytics':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <BarChart3 className="h-8 w-8 text-green-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold">Total Reach</h3>
+                    <p className="text-3xl font-bold text-blue-600">0</p>
+                    <p className="text-sm text-gray-500">This month</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold">Engagement</h3>
+                    <p className="text-3xl font-bold text-green-600">0</p>
+                    <p className="text-sm text-gray-500">This month</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold">Followers</h3>
+                    <p className="text-3xl font-bold text-purple-600">0</p>
+                    <p className="text-sm text-gray-500">Total followers</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold">Posts</h3>
+                    <p className="text-3xl font-bold text-orange-600">0</p>
+                    <p className="text-sm text-gray-500">This month</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'engagement':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Users className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Engagement</h1>
+            </div>
             <Card>
               <CardHeader>
-                <CardTitle>Unified Message Center</CardTitle>
-                <CardDescription>
-                  Manage messages from Facebook, Instagram, and Gmail
-                </CardDescription>
+                <CardTitle>Social Interactions</CardTitle>
+                <CardDescription>Monitor likes, comments, and shares</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Message management interface coming soon...</p>
+                <p className="text-gray-500">No engagement data available</p>
               </CardContent>
             </Card>
+          </div>
+        );
+
+      case 'campaigns':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Megaphone className="h-8 w-8 text-orange-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Ad Broadcasting</CardTitle>
+                <CardDescription>Create and manage advertising campaigns</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button>Create New Campaign</Button>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
+      case 'social-accounts':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Share2 className="h-8 w-8 text-purple-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Social Accounts</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Connected Accounts</CardTitle>
+                  <CardDescription>Manage your connected social media accounts</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No accounts connected</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add Account</CardTitle>
+                  <CardDescription>Connect new social media accounts</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button>Connect Account</Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'customers':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <User className="h-8 w-8 text-green-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Customers</h1>
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Audience Insights</CardTitle>
+                <CardDescription>View customer demographics and behavior</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-500">No customer data available</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
+      case 'calls':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Phone className="h-8 w-8 text-blue-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Calls</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Calls</CardTitle>
+                  <CardDescription>View your recent call history</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No recent calls</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Call Analytics</CardTitle>
+                  <CardDescription>Track call performance and metrics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No call data available</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'calendar':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Calendar className="h-8 w-8 text-purple-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Calendar</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Today's Schedule</CardTitle>
+                  <CardDescription>Your appointments for today</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No appointments scheduled</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Upcoming Events</CardTitle>
+                  <CardDescription>Your upcoming appointments</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">No upcoming appointments</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
+
+      case 'ai-assistant':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Bot className="h-8 w-8 text-pink-600" />
+              <h1 className="text-3xl font-bold text-gray-900">AI Assistant</h1>
+            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Smart Assistant</CardTitle>
+                <CardDescription>Get AI-powered insights and automation</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-pink-50 p-4 rounded-lg">
+                  <p className="text-pink-800">AI Assistant is ready to help you manage your communications more efficiently.</p>
+                </div>
+                <Button className="bg-pink-600 hover:bg-pink-700 text-white">
+                  Start Chat with AI
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        );
+
+      case 'settings':
+        return (
+          <div className="space-y-6 p-6">
+            <div className="flex items-center gap-3">
+              <Settings className="h-8 w-8 text-gray-600" />
+              <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Account Settings</CardTitle>
+                  <CardDescription>Manage your account preferences</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline">Edit Profile</Button>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Notification Settings</CardTitle>
+                  <CardDescription>Configure your notification preferences</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline">Manage Notifications</Button>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         );
         
